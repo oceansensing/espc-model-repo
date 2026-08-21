@@ -1,0 +1,33 @@
+# What this repository publishes. Nothing yet.
+#
+# The ESPC products move here from `realtime-data-repo` as part of the split
+# — the currents at the surface and 50 m, and the Navy temperature and
+# salinity — while the **ice stays behind**, deliberately, as a live test that
+# moving one product between repositories is cheap.
+#
+# Two rules this file has to satisfy, both learned in the other repository:
+#
+# - **`roots` must agree with `test-schema.mjs --roots` in the site
+#   repository**, both directions. That check exits non-zero on disagreement
+#   and stops the publish, which is correct: a root no product owns has nobody
+#   to fetch it. The contract is three-sided now.
+# - **A product that leaves takes its files with it.** The stage is seeded
+#   from the last publish, so a root a pipeline stops writing is carried
+#   forward for ever — 32 files and 43.8 MB the last time a layer moved. A
+#   product declares a `namespace` command so the orchestrator can say what is
+#   no longer named.
+
+[contract]
+check = ["node", "site/scripts/test-schema.mjs"]
+roots = ["node", "site/scripts/test-schema.mjs", "--roots"]
+
+[defaults]
+timeout_minutes = 20
+
+# --- steps -------------------------------------------------------------------
+# `lane` names the upstream a step leans on. Steps in different lanes run
+# concurrently; steps in the same lane queue, because two HYCOM reads competing
+# for the same THREDDS server help nobody, least of all HYCOM.
+#
+# No steps and no products until the move. A run before then assembles an
+# empty tree, which is why the workflow's crons are commented out.
