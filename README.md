@@ -31,6 +31,13 @@ was the alternative, and three faults were found in that file in a single day
   the fetchers, so this needs the private half of a **read-only deploy key**
   whose public half sits on that repository's Deploy keys page.
 
+  **Read-only: leave "Allow write access" unchecked.** A deploy key's *scope*
+  is by construction — one repository, no other — but read-only is a checkbox.
+  Nothing here pushes to the site repository, and this job runs `pip install`,
+  `npm ci` and four fetch scripts against public servers, so write access
+  would put the repository that deploys the public site inside that blast
+  radius.
+
   **Its own key, not the one `realtime-data-repo` uses.** A repository may
   hold many deploy keys, and one per consumer means revoking or rotating one
   does not take the other down.

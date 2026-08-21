@@ -63,9 +63,17 @@ jobs:
       # every product at once rather than one.
       #
       # A deploy key over a PAT or an App, on what this step actually needs:
-      # it reads exactly one repository and writes nothing. Scoped to one
-      # repository and read-only by construction rather than by configuration,
-      # it does not expire, and it belongs to no person.
+      # it reads exactly one repository and writes nothing. The *scope* is by
+      # construction — a deploy key reaches one repository and no other — and
+      # the **read-only part is a checkbox**, "Allow write access", which must
+      # be left unchecked. Nothing here pushes to the site repository, and
+      # this job runs `pip install`, `npm ci` and four fetch scripts against
+      # public servers, so write access here would put the repository that
+      # deploys the public site inside that blast radius.
+      #
+      # It also does not expire, where a fine-grained PAT stops the whole
+      # pipeline dead on its expiry date, and it belongs to no person, so it
+      # survives somebody leaving the org.
       #
       # **Its own key, not the one `realtime-data-repo` uses.** A repository
       # may hold many deploy keys, and one per consumer means revoking or
