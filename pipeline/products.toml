@@ -7,10 +7,13 @@
 #
 # Two rules this file has to satisfy, both learned in the other repository:
 #
-# - **`roots` must agree with `test-schema.mjs --roots` in the site
-#   repository**, both directions. That check exits non-zero on disagreement
-#   and stops the publish, which is correct: a root no product owns has nobody
-#   to fetch it. The contract is three-sided now.
+# - **Every `roots` entry here must be one the site's `test-schema.mjs
+#   --roots` publishes.** The orchestrator exits 2 on a root declared here
+#   that the contract does not know, and stops the publish. It does *not*
+#   fail on the reverse — a contract root this repository has no product for
+#   is the ordinary case now, because `realtime-data-repo` owns most of them.
+#   The union across origins is held by `check:docs` on the site, which is
+#   the only side that can see every declaration at once.
 # - **A product that leaves takes its files with it.** The stage is seeded
 #   from the last publish, so a root a pipeline stops writing is carried
 #   forward for ever — 32 files and 43.8 MB the last time a layer moved. A

@@ -53,11 +53,20 @@ was the alternative, and three faults were found in that file in a single day
 
 ## The published contract
 
-Every root this repository publishes must be declared here **and** agree with
-`test-schema.mjs --roots` in the site repository, which is the one derived
-list of published files. That contract is three-sided now — this repository,
-`realtime-data-repo` and the site — and a root declared on one side and not
-another stops the publish rather than shipping a tree nobody can read.
+Every root this repository publishes must be declared here **and** be one the
+site's `test-schema.mjs --roots` publishes, which is the one derived list of
+published files. That contract is three-sided now — this repository,
+`realtime-data-repo` and the site.
+
+The two halves are split by what each side can answer alone. **Here**: a run
+exits 2 on a root declared in `products.toml` that the contract does not
+publish. It does not fail on the reverse, because a contract root this
+repository has no product for belongs to another origin, whose declarations
+this run cannot see — failing on it would stop this publish over a gap in
+somebody else's. **On the site**: `check:docs` reads `MAP_ORIGINS` and every
+origin's `products.toml` together, and fails when a root is declared by
+nobody or by two. Both directions are covered, and the union half runs before
+a push rather than after one.
 
 `status/status.json` is the routing document consumers read: per product, the
 `roots` this origin serves, its `source`, its `hour`, the `hours` it offers
