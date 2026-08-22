@@ -23,19 +23,16 @@ on:
         type: choice
         options: [full, light]
         default: full
-  # **Still commented, deliberately: this stage is a rehearsal.** The products
-  # are declared and the caches are wired, but `realtime-data-repo` is still
-  # publishing the same four roots and the map still reads only that origin.
-  # Dispatch a run by hand, check what it publishes, and turn these on in the
-  # same change that removes the products from the sibling — one owner per
-  # root, never two.
+  # **On since 2026-08-22**, in the same change that removed the currents from
+  # `realtime-data-repo` and added this origin to the site's `MAP_ORIGINS` —
+  # one owner per root, never two, which `check:docs` refuses to let drift.
   #
   # Offset from the sibling's `35 * * * *` and `2 0,6,12,18 * * *` so the two
   # repositories never read HYCOM in the same minute. **No light cron**: a
   # light run refreshes the fast products, and this repository has none.
-  # schedule:
-  #   - cron: '5 * * * *'
-  #   - cron: '32 0,6,12,18 * * *'
+  schedule:
+    - cron: '5 * * * *'
+    - cron: '32 0,6,12,18 * * *'
 
 # Nothing at workflow level: each job says what it holds, and the job that
 # runs `pip install` and the fetchers holds nothing worth stealing.
