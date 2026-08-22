@@ -51,31 +51,8 @@ timeout_minutes = 30
 # pipeline snaps its step to a six-hour boundary. A light cron here would spin
 # a runner twice an hour to fetch nothing.
 
-# BOOTSTRAP, to be reverted: `--leads=12` on both steps.
-#
-# This repository has never published, so a failed fetch has no previous file
-# to keep and the whole product is held -- three dispatched runs died that
-# way. HYCOM is returning `java.io.IOException: Stale file handle` on its
-# forecast steps, and the steps a normal run reads are the worst of them.
-#
-# Measured 2026-08-22 04:15Z, 20 tries each at the 50 m level, with the
-# per-slab failure a 4-try ladder leaves:
-#
-#   --leads=0   t=72  70%  0.81%
-#   --leads=12  t=76  80%  0.16%   <- this
-#   --leads=24  t=80  55%  4.10%
-#   --leads=36  t=84  60%  2.56%   <- what a normal run reads
-#
-# So this is 16x safer per slab than the default, which is the difference
-# between roughly 12% and 92% odds of the grid pass completing. It publishes
-# an hour about 28 h stale, which costs nothing: no origin reads this
-# repository yet.
-#
-# **Both steps carry it or neither.** The contract holds every ESPC layer to
-# an hour the currents advertise, so a currents grid at one lead and fields at
-# another fails the tree.
 [steps.currents]
-cmd = ["python3", "scripts/fetch-currents.py", "--leads=12"]
+cmd = ["python3", "scripts/fetch-currents.py"]
 lane = "hycom"
 
 # **`--only` is what makes this a share rather than the whole script.** The
@@ -85,7 +62,7 @@ lane = "hycom"
 # that the owners between them name every file the script publishes, so a
 # product added there fails until it is given a home.
 [steps.fields]
-cmd = ["python3", "scripts/fetch-ocean-fields.py", "--only=sst-navy,sss-navy", "--leads=12"]
+cmd = ["python3", "scripts/fetch-ocean-fields.py", "--only=sst-navy,sss-navy"]
 lane = "hycom"
 
 # --- products ----------------------------------------------------------------
