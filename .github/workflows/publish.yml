@@ -23,10 +23,19 @@ on:
         type: choice
         options: [full, light]
         default: full
+  # **Still commented, deliberately: this stage is a rehearsal.** The products
+  # are declared and the caches are wired, but `realtime-data-repo` is still
+  # publishing the same four roots and the map still reads only that origin.
+  # Dispatch a run by hand, check what it publishes, and turn these on in the
+  # same change that removes the products from the sibling — one owner per
+  # root, never two.
+  #
+  # Offset from the sibling's `35 * * * *` and `2 0,6,12,18 * * *` so the two
+  # repositories never read HYCOM in the same minute. **No light cron**: a
+  # light run refreshes the fast products, and this repository has none.
   # schedule:
   #   - cron: '5 * * * *'
   #   - cron: '32 0,6,12,18 * * *'
-  #   - cron: '45,25 * * * *'
 
 # Nothing at workflow level: each job says what it holds, and the job that
 # runs `pip install` and the fetchers holds nothing worth stealing.
@@ -144,13 +153,23 @@ jobs:
         working-directory: engine
         run: python3 pipeline/test_orchestrate.py
 
+      # **Every scheduled run here is full, and the light branch is gone rather
+      # than left comparing against a cron string this workflow does not
+      # have.** The sibling keeps one, because a light run is how it refreshes
+      # storms and gliders three times an hour; this repository has no fast
+      # product to refresh, so it schedules none — and a comparison against
+      # `45,25 * * * *` would read to anybody as evidence that one exists.
+      # A claim that migrates with a copy is how this project's docs went
+      # wrong about a sibling's push trigger for a day.
+      #
+      # `workflow_dispatch` can still ask for light, which fetches nothing
+      # here and republishes the seed. That is a real thing to want exactly
+      # once — checking the assemble and publish path without touching HYCOM.
       - name: Decide the mode
         id: mode
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event.schedule }}" = "45,25 * * * *" ]; then
-            echo "mode=light" >> "$GITHUB_OUTPUT"
           else
             echo "mode=full" >> "$GITHUB_OUTPUT"
           fi
@@ -166,11 +185,49 @@ jobs:
           PIPELINE_ROOT: ${{ github.workspace }}
         run: python3 engine/pipeline/orchestrate.py plan --mode "${{ steps.mode.outputs.mode }}"
 
+      # **One Restore and one Save per `cache` name in products.toml.** Nothing
+      # loops here, because a matrix would need separate jobs — so this pair
+      # is the list a new product silently escapes, and the orchestrator's
+      # `plan` names any declared cache with neither step. That failure is
+      # invisible otherwise: a cache nothing restores is not an error, it is
+      # tiles rebuilt from scratch every run, with correct output.
+      #
+      # The prefix restore is light-only and inert here, since no light run is
+      # scheduled — kept identical to the sibling's so the two do not drift in
+      # a way somebody has to notice.
+      - name: Restore current tiles
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ steps.plan.outputs.cache-paths-currents-tiles }}
+          key: ${{ steps.plan.outputs.cache-key-currents-tiles }}
+          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-currents-tiles || '' }}
+
+      - name: Restore field tiles
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ steps.plan.outputs.cache-paths-field-tiles }}
+          key: ${{ steps.plan.outputs.cache-key-field-tiles }}
+          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-field-tiles || '' }}
+
       - name: Fetch, validate, assemble
         id: run
         env:
           PIPELINE_ROOT: ${{ github.workspace }}
         run: python3 engine/pipeline/orchestrate.py run
+
+      - name: Save current tiles
+        if: steps.run.outputs.built-currents-tiles == 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ steps.plan.outputs.cache-paths-currents-tiles }}
+          key: ${{ steps.plan.outputs.cache-key-currents-tiles }}
+
+      - name: Save field tiles
+        if: steps.run.outputs.built-field-tiles == 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ steps.plan.outputs.cache-paths-field-tiles }}
+          key: ${{ steps.plan.outputs.cache-key-field-tiles }}
 
       - name: Upload the site
         if: steps.run.outputs.deploy == 'true'

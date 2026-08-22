@@ -1,4 +1,5 @@
-# What this repository publishes. Nothing yet.
+# What this repository publishes: the ESPC currents and the Navy temperature
+# and salinity, off one model through two steps.
 #
 # The ESPC products move here from `realtime-data-repo` as part of the split
 # — the currents at the surface and 50 m, and the Navy temperature and
@@ -20,12 +21,104 @@
 #   product declares a `namespace` command so the orchestrator can say what is
 #   no longer named.
 
+# **The paths are relative to the site checkout, not to this workspace.** The
+# orchestrator runs both of these with the site checkout as their working
+# directory, so `site/scripts/...` would have looked right and resolved to
+# nothing. Corrected before the first run that would have met it.
 [contract]
-check = ["node", "site/scripts/test-schema.mjs"]
-roots = ["node", "site/scripts/test-schema.mjs", "--roots"]
+check = ["node", "scripts/test-schema.mjs"]
+roots = ["node", "scripts/test-schema.mjs", "--roots"]
 
+# The currents fetch is the long one here, and 30 is what it gets in the
+# repository it is moving from. A shorter default would have changed a
+# product's behaviour as a side effect of moving it, which is the one thing a
+# move must not do.
 [defaults]
-timeout_minutes = 20
+timeout_minutes = 30
+
+# --- steps -------------------------------------------------------------------
+# `lane` names the upstream a step leans on. Steps in different lanes run
+# concurrently; steps in the same lane queue, because two HYCOM reads competing
+# for the same THREDDS server help nobody, least of all HYCOM.
+#
+# Both steps are one lane for that reason — and note the split makes it two
+# *repositories* reading HYCOM now, which no lane can serialize. That is what
+# the offset crons in the workflow are for.
+#
+# **No step is marked `light`, and no light run is scheduled.** A light run
+# exists to refresh the fast products three times an hour — storms, gliders,
+# buoys — and this repository has none: ESPC publishes hourly at best and this
+# pipeline snaps its step to a six-hour boundary. A light cron here would spin
+# a runner twice an hour to fetch nothing.
+
+[steps.currents]
+cmd = ["python3", "scripts/fetch-currents.py"]
+lane = "hycom"
+
+# **`--only` is what makes this a share rather than the whole script.** The
+# same fetcher publishes the OISST family and the Navy ice, which stay in
+# `realtime-data-repo`; naming the two products here keeps this run from
+# writing files another repository owns. `test:probes` on the site asserts
+# that the owners between them name every file the script publishes, so a
+# product added there fails until it is given a home.
+[steps.fields]
+cmd = ["python3", "scripts/fetch-ocean-fields.py", "--only=sst-navy,sss-navy"]
+lane = "hycom"
+
+# --- products ----------------------------------------------------------------
+# `roots` are the files nothing else links to — the map's entry points, and
+#   the level the contract's `--roots` list is checked against. The
+#   orchestrator hands them to the contract check as `--owned=`, which is what
+#   stops it failing this tree for every root the other origin publishes.
+# `writes` is the product's namespace for the write fence: every filename its
+#   step may create, as globs.
+# `namespace` is the narrower question — what this product still owns — asked
+#   of the pipeline rather than declared here, and answered without the
+#   network so an upstream outage cannot read as an empty namespace.
+# `max_age_hours` is sized to the product's own cadence, not to the cron.
+
+[products.currents]
+title = "Surface and 50 m currents (ESPC)"
+step = "currents"
+roots = ["currents.json", "currents-50m.json"]
+writes = ["currents*.json"]
+max_age_hours = 9
+namespace = ["python3", "scripts/fetch-currents.py", "--namespace"]
+
+[products.currents.tiles]
+build = ["python3", "scripts/fetch-currents.py", "--tiles"]
+key = ["python3", "scripts/fetch-currents.py", "--tile-key"]
+cache = "currents-tiles"
+# Each tile directory belongs to one grid, and must be its hour. A `*` in the
+# directory carries into the grid name — the forecast frames are named for
+# their lead, and the lead moves with the run's lateness.
+match = [
+  ["tiles", "currents.json"],
+  ["tiles-50m", "currents-50m.json"],
+  ["tiles-f*h", "currents-f*h.json"],
+  ["tiles-50m-f*h", "currents-50m-f*h.json"],
+]
+
+[products.fields-navy]
+title = "Navy ESPC temperature and salinity"
+step = "fields"
+roots = ["sst-navy.json", "sss-navy.json"]
+writes = ["sst-navy*.json", "sss-navy*.json"]
+max_age_hours = 9
+namespace = ["python3", "scripts/fetch-ocean-fields.py", "--namespace", "--only=sst-navy,sss-navy"]
+
+# A new `cache` name needs a **Restore** and a **Save** step in the workflow,
+# written by hand because a matrix would need separate jobs. `plan` names any
+# declared cache with neither, because a cache nothing restores is invisible:
+# the tiles are simply rebuilt every run and the output is correct.
+[products.fields-navy.tiles]
+build = ["python3", "scripts/fetch-ocean-fields.py", "--tiles", "--only=sst-navy,sss-navy"]
+key = ["python3", "scripts/fetch-ocean-fields.py", "--tile-key", "--only=sst-navy,sss-navy"]
+cache = "field-tiles"
+match = [
+  ["tiles-sst-navy", "sst-navy.json"],
+  ["tiles-sss-navy", "sss-navy.json"],
+]
 
 # --- steps -------------------------------------------------------------------
 # `lane` names the upstream a step leans on. Steps in different lanes run

@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- The one hand-written page in this repository. The workflow copies it to
+     the publish root because workflow-mode Pages never runs Jekyll: a README
+     shipped as index.md is a file rather than a page, and the first
+     generation of this pipeline answered 404 at its root from the day it
+     launched with nothing to say so. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>espc-model-repo</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; max-width: 40rem;
+         margin: 3rem auto; padding: 0 1rem; color: #1a1f24; background: #fff; }
+  @media (prefers-color-scheme: dark) {
+    body { color: #d7dde3; background: #14181c; }
+    a { color: #7db3e8; }
+  }
+  code { font-size: 0.9em; }
+</style>
+</head>
+<body>
+<h1>espc-model-repo</h1>
+<p>One model, published on its own: the US Navy ESPC-D-V02 surface and 50 m
+currents, and its sea surface temperature and salinity, for the
+<a href="https://oceansensing.org/visualization/">C4PO ocean map</a>. The
+Navy sea ice comes off the same model and is published by
+<a href="https://oceansensing.org/realtime-data-repo/">realtime-data-repo</a>
+instead — deliberately, so that moving one product between repositories stays
+a thing this arrangement can do rather than a thing it once did.</p>
+<p>It is not a public API. The files under <code>map/</code> exist to be read
+by the map, and their layout is that map's contract.</p>
+<p>What is fresh, what is held, and which roots this origin serves:
+<a href="status/status.json">status/status.json</a>. The run's intent and
+outcome sit beside it as <code>plan.json</code> and <code>receipt.json</code>.</p>
+<p>How it works, and why it holds no code of its own:
+<a href="https://github.com/oceansensing/espc-model-repo">the repository
+README</a>.</p>
+</body>
+</html>
