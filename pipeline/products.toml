@@ -1,5 +1,15 @@
-# What this repository publishes: the ESPC currents and the Navy temperature
-# and salinity, off one model through two steps.
+# What this repository publishes: the ESPC currents, and nothing else.
+#
+# **The Navy temperature and salinity stay in `realtime-data-repo`**, the
+# owner's call on 2026-08-22, after the storage was measured rather than
+# estimated. A tiled u/v product is about 88 MB per frame; the three
+# depth-averaged current layers planned here are 528 MB of tiles between
+# them, and with sst and sss as well this repository came to ~969 MB against
+# a 1 GB Pages limit. Without them it is ~880 MB, which is still tight and is
+# why whether those layers need full 1/12 deg tiles is still open.
+#
+# It also gives this repository one subject rather than two: the currents at
+# every depth the model offers, from one model, in one place.
 #
 # The ESPC products move here from `realtime-data-repo` as part of the split
 # — the currents at the surface and 50 m, and the Navy temperature and
@@ -55,28 +65,6 @@ timeout_minutes = 30
 cmd = ["python3", "scripts/fetch-currents.py"]
 lane = "hycom"
 
-# **`--only` is what makes this a share rather than the whole script.** The
-# same fetcher publishes the OISST family and the Navy ice, which stay in
-# `realtime-data-repo`; naming the two products here keeps this run from
-# writing files another repository owns. `test:probes` on the site asserts
-# that the owners between them name every file the script publishes, so a
-# product added there fails until it is given a home.
-[steps.fields]
-cmd = ["python3", "scripts/fetch-ocean-fields.py", "--only=sst-navy,sss-navy"]
-lane = "hycom"
-
-# --- products ----------------------------------------------------------------
-# `roots` are the files nothing else links to — the map's entry points, and
-#   the level the contract's `--roots` list is checked against. The
-#   orchestrator hands them to the contract check as `--owned=`, which is what
-#   stops it failing this tree for every root the other origin publishes.
-# `writes` is the product's namespace for the write fence: every filename its
-#   step may create, as globs.
-# `namespace` is the narrower question — what this product still owns — asked
-#   of the pipeline rather than declared here, and answered without the
-#   network so an upstream outage cannot read as an empty namespace.
-# `max_age_hours` is sized to the product's own cadence, not to the cron.
-
 [products.currents]
 title = "Surface and 50 m currents (ESPC)"
 step = "currents"
@@ -98,32 +86,3 @@ match = [
   ["tiles-f*h", "currents-f*h.json"],
   ["tiles-50m-f*h", "currents-50m-f*h.json"],
 ]
-
-[products.fields-navy]
-title = "Navy ESPC temperature and salinity"
-step = "fields"
-roots = ["sst-navy.json", "sss-navy.json"]
-writes = ["sst-navy*.json", "sss-navy*.json"]
-max_age_hours = 9
-namespace = ["python3", "scripts/fetch-ocean-fields.py", "--namespace", "--only=sst-navy,sss-navy"]
-
-# A new `cache` name needs a **Restore** and a **Save** step in the workflow,
-# written by hand because a matrix would need separate jobs. `plan` names any
-# declared cache with neither, because a cache nothing restores is invisible:
-# the tiles are simply rebuilt every run and the output is correct.
-[products.fields-navy.tiles]
-build = ["python3", "scripts/fetch-ocean-fields.py", "--tiles", "--only=sst-navy,sss-navy"]
-key = ["python3", "scripts/fetch-ocean-fields.py", "--tile-key", "--only=sst-navy,sss-navy"]
-cache = "field-tiles"
-match = [
-  ["tiles-sst-navy", "sst-navy.json"],
-  ["tiles-sss-navy", "sss-navy.json"],
-]
-
-# --- steps -------------------------------------------------------------------
-# `lane` names the upstream a step leans on. Steps in different lanes run
-# concurrently; steps in the same lane queue, because two HYCOM reads competing
-# for the same THREDDS server help nobody, least of all HYCOM.
-#
-# No steps and no products until the move. A run before then assembles an
-# empty tree, which is why the workflow's crons are commented out.
