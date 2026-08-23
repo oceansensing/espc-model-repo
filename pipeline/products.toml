@@ -65,10 +65,19 @@ timeout_minutes = 30
 cmd = ["python3", "scripts/fetch-currents.py"]
 lane = "hycom"
 
+# **One product, not four**, and the reason is that they are one fetch and one
+# hour. The three depth-averaged caps are computed from the same profile read
+# that the levels come from, published in the same run, and must carry the same
+# model run and valid time — so they share a fate, an age and a step. Splitting
+# them into their own `[products.*]` would give the orchestrator four things to
+# hold at one hour where the pipeline already guarantees it.
 [products.currents]
-title = "Surface and 50 m currents (ESPC)"
+title = "Currents at the surface and 50 m, and averaged to 200, 350 and 1000 m (ESPC)"
 step = "currents"
-roots = ["currents.json", "currents-50m.json"]
+roots = [
+  "currents.json", "currents-50m.json",
+  "currents-avg200m.json", "currents-avg350m.json", "currents-avg1000m.json",
+]
 writes = ["currents*.json"]
 max_age_hours = 9
 namespace = ["python3", "scripts/fetch-currents.py", "--namespace"]
@@ -85,4 +94,10 @@ match = [
   ["tiles-50m", "currents-50m.json"],
   ["tiles-f*h", "currents-f*h.json"],
   ["tiles-50m-f*h", "currents-50m-f*h.json"],
+  ["tiles-avg200m", "currents-avg200m.json"],
+  ["tiles-avg350m", "currents-avg350m.json"],
+  ["tiles-avg1000m", "currents-avg1000m.json"],
+  ["tiles-avg200m-f*h", "currents-avg200m-f*h.json"],
+  ["tiles-avg350m-f*h", "currents-avg350m-f*h.json"],
+  ["tiles-avg1000m-f*h", "currents-avg1000m-f*h.json"],
 ]
