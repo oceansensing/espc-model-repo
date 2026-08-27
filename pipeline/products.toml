@@ -81,6 +81,11 @@ roots = [
 writes = ["currents*.json"]
 max_age_hours = 9
 namespace = ["python3", "scripts/fetch-currents.py", "--namespace"]
+# The physics gate — see the fetcher's own quality block for the constants
+# and the 2026-08-26 striped-ocean yield that forced it. A rejection holds
+# the product exactly like an outage: previous fields served, no tiles
+# rebuilt from the bad grids.
+quality = ["python3", "scripts/fetch-currents.py", "--quality"]
 
 [products.currents.tiles]
 build = ["python3", "scripts/fetch-currents.py", "--tiles"]
