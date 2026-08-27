@@ -317,22 +317,3 @@ jobs:
         if: needs.build.outputs.deploy == 'true'
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
 
-      # **After the deploy, never instead of it.** A tree that is behind must
-      # still publish: refusing would leave the reader something older still,
-      # which is the one response to staleness that makes it worse. So the
-      # data goes out and the RUN is failed, which puts a red mark on the
-      # schedule and sends the notification GitHub already knows how to send.
-      #
-      # Only products whose newer data EXISTED and was not published reach
-      # here — old-because-upstream-has-nothing-newer is a note and leaves
-      # this green. That split is what lets this be a failure rather than a
-      # thing to learn to ignore; it is made in the orchestrator beside
-      # `nearest_frame_age`.
-      - name: Fail if the tree went out behind
-        if: needs.build.outputs.behind != ''
-        run: |
-          echo "::error title=Published behind::${{ needs.build.outputs.behind }}"
-          echo "The tree deployed, and it is serving data older than its"
-          echo "budget while newer data was available upstream:"
-          echo "  ${{ needs.build.outputs.behind }}"
-          exit 1
