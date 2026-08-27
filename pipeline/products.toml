@@ -84,16 +84,18 @@ lane = "hycom"
 # namespaces, tiles and quality verdicts split. The `writes` globs mirror
 # `DOMAINS` in fetch-currents.py; a file matching no product is a fence
 # failure, which is the loud shape a new region or depth fails in until
-# both sides learn it.
+# both sides learn it. The `-vbar1d` files are each layer's running daily
+# mean — the quality gate's reference, folded only from accepted base
+# fields and published with the product so a hold restores it too.
 [products.currents-surface]
 title = "Currents at the surface (ESPC)"
 step = "currents"
 roots = ["currents.json"]
 writes = [
-  "currents.json", "currents-f*h.json",
-  "currents-atlantic.json", "currents-atlantic-f*h.json",
-  "currents-arctic.json", "currents-arctic-f*h.json",
-  "currents-antarctic.json", "currents-antarctic-f*h.json",
+  "currents.json", "currents-f*h.json", "currents-vbar1d.json",
+  "currents-atlantic.json", "currents-atlantic-f*h.json", "currents-atlantic-vbar1d.json",
+  "currents-arctic.json", "currents-arctic-f*h.json", "currents-arctic-vbar1d.json",
+  "currents-antarctic.json", "currents-antarctic-f*h.json", "currents-antarctic-vbar1d.json",
 ]
 max_age_hours = 9
 namespace = ["python3", "scripts/fetch-currents.py", "--namespace", "--only=surface"]
