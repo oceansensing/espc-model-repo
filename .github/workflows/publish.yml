@@ -27,12 +27,31 @@ on:
   # `realtime-data-repo` and added this origin to the site's `MAP_ORIGINS` —
   # one owner per root, never two, which `check:docs` refuses to let drift.
   #
-  # Offset from the sibling's `35 * * * *` and `2 0,6,12,18 * * *` so the two
-  # repositories never read HYCOM in the same minute. **No light cron**: a
-  # light run refreshes the fast products, and this repository has none.
+  # Offset from the sibling's `35 * * * *`, `15,55 * * * *` and
+  # `2 0,6,12,18 * * *` so the two repositories never read HYCOM in the same
+  # minute. **No light cron**: a light run refreshes the fast products, and
+  # this repository has none.
+  #
+  # **Three attempts an hour, and none at the top of it.** This is a realtime
+  # map and the owner's bar is data no more than 1.5 h old (2026-08-27).
+  # Hourly at `:05` did not deliver it: GitHub's scheduled events are
+  # best-effort, and measured over 2026-08-26/27 the runs landed 45 min to
+  # **4 h 19 min** apart — never at `:05`, because the top of the hour is the
+  # most congested slot on the whole platform. Nothing was failing; the events
+  # simply arrived late or not at all. More attempts at unpopular minutes is
+  # the only lever a repository has over that.
+  #
+  # **It is not a cost question** — this repository is public, so Actions
+  # minutes are free — and it is deliberately not a load question either. The
+  # probe-first exit means a run with nothing new to fetch reads a handful of
+  # OPeNDAP metadata requests and stops: measured, a no-op run is 1 min 22 s
+  # end to end. Upstream is the thing to protect, not the runner: HYCOM is
+  # already answering some requests with timeouts, so the cadence is three an
+  # hour rather than six, and the real fetch still happens only when the
+  # anchor rolls over.
   schedule:
-    - cron: '5 * * * *'
-    - cron: '32 0,6,12,18 * * *'
+    - cron: '7,27,47 * * * *'
+    - cron: '12 0,3,6,9,12,15,18,21 * * *'
 
 # Nothing at workflow level: each job says what it holds, and the job that
 # runs `pip install` and the fetchers holds nothing worth stealing.
