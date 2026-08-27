@@ -22,34 +22,37 @@ repository. Copying 988 lines of orchestrator into every new data repository
 was the alternative, and three faults were found in that file in a single day
 — each would have had to be found twice and fixed twice.
 
-## What is not set up yet
+## Live since 2026-08-22 — and what changed on 2026-08-27
 
-- **`pipeline/products.toml` declares no products.** Until the ESPC products
-  move here, a run would assemble an empty tree, which is why the scheduled
-  crons in the workflow are commented out rather than live.
-- **`PIPELINES_SSH_KEY` is not set.** The site repository is private and holds
-  the fetchers, so this needs the private half of a **read-only deploy key**
-  whose public half sits on that repository's Deploy keys page.
+Everything the section that used to sit here called "not set up yet" is
+set up: the crons run (hourly at :05, plus :32 on the 6-hour boundaries,
+offset from the sibling so two repositories never read HYCOM in the same
+minute), `PIPELINES_SSH_KEY` is armed with its own read-only deploy key,
+and the `published` branch exists and force-updates each publish.
 
-  **Read-only: leave "Allow write access" unchecked.** A deploy key's *scope*
-  is by construction — one repository, no other — but read-only is a checkbox.
-  Nothing here pushes to the site repository, and this job runs `pip install`,
-  `npm ci` and four fetch scripts against public servers, so write access
-  would put the repository that deploys the public site inside that blast
-  radius.
+`pipeline/products.toml` declares **three currents products, one per
+upstream read** — `currents-surface` (the z=0 level), `currents-50m`
+(z=14), `currents-caps` (the one shared profile read the three
+depth-averages are computed from). One fetch step serves all three; what
+splits is FATE. The split exists because HYCOM corrupted the deep reads
+while the surface stayed clean (2026-08-26: every level below ~20 m
+served as a column-constant broadcast profile with HTTP 200 throughout),
+and a single product would have held the good surface hostage.
 
-  **Its own key, not the one `realtime-data-repo` uses.** A repository may
-  hold many deploy keys, and one per consumer means revoking or rotating one
-  does not take the other down.
+Each product declares a **physics quality gate**
+(`fetch-currents.py --quality --only=<domain>`): anisotropy of the field
+plus correlation against a running daily mean (`*-vbar1d.json`, folded
+only from accepted base fields, judged-then-folded, deduped by valid
+hour). A failing domain HOLDS — previous publish served, reason in
+`status/status.json` — while the others publish. The fetch itself
+probe-exits when nothing is new and nothing is missing, so most hourly
+runs cost two metadata reads.
 
-  **Order matters, and it has been measured the hard way:** put the public
-  half on the site repository *first*, then set the secret here. A non-empty
-  `ssh-key` sends `actions/checkout` down SSH immediately and the HTTPS
-  fallback is not consulted, so setting the secret first breaks every run in
-  between.
-
-- **No `published` branch yet.** The first run creates it. Until then the
-  orchestrator starts cold and says so.
+**Known open decision** (recorded in the site's `PLAN.md`): a held
+domain at an older hour of the same model run fails the site contract's
+ESPC hour rule, which sets deploy=False and freezes the whole Pages
+tree until the domain heals or the run changes. Whether a held product
+should read as a note rather than a fault is the owner's call.
 
 ## The published contract
 
