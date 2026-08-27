@@ -192,12 +192,30 @@ jobs:
       # The prefix restore is light-only and inert here, since no light run is
       # scheduled — kept identical to the sibling's so the two do not drift in
       # a way somebody has to notice.
-      - name: Restore current tiles
+      # Three pairs now, one per fault-domain product — the split that lets a
+      # clean surface publish while a corrupt depth holds. `plan` names any
+      # declared cache with neither step, so a fourth product cannot silently
+      # escape this list.
+      - name: Restore surface tiles
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
-          path: ${{ steps.plan.outputs.cache-paths-currents-tiles }}
-          key: ${{ steps.plan.outputs.cache-key-currents-tiles }}
-          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-currents-tiles || '' }}
+          path: ${{ steps.plan.outputs.cache-paths-currents-tiles-surface }}
+          key: ${{ steps.plan.outputs.cache-key-currents-tiles-surface }}
+          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-currents-tiles-surface || '' }}
+
+      - name: Restore 50 m tiles
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ steps.plan.outputs.cache-paths-currents-tiles-50m }}
+          key: ${{ steps.plan.outputs.cache-key-currents-tiles-50m }}
+          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-currents-tiles-50m || '' }}
+
+      - name: Restore cap tiles
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ steps.plan.outputs.cache-paths-currents-tiles-caps }}
+          key: ${{ steps.plan.outputs.cache-key-currents-tiles-caps }}
+          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-currents-tiles-caps || '' }}
 
       - name: Fetch, validate, assemble
         id: run
@@ -205,12 +223,26 @@ jobs:
           PIPELINE_ROOT: ${{ github.workspace }}
         run: python3 engine/pipeline/orchestrate.py run
 
-      - name: Save current tiles
-        if: steps.run.outputs.built-currents-tiles == 'true'
+      - name: Save surface tiles
+        if: steps.run.outputs.built-currents-tiles-surface == 'true'
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
-          path: ${{ steps.plan.outputs.cache-paths-currents-tiles }}
-          key: ${{ steps.plan.outputs.cache-key-currents-tiles }}
+          path: ${{ steps.plan.outputs.cache-paths-currents-tiles-surface }}
+          key: ${{ steps.plan.outputs.cache-key-currents-tiles-surface }}
+
+      - name: Save 50 m tiles
+        if: steps.run.outputs.built-currents-tiles-50m == 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ steps.plan.outputs.cache-paths-currents-tiles-50m }}
+          key: ${{ steps.plan.outputs.cache-key-currents-tiles-50m }}
+
+      - name: Save cap tiles
+        if: steps.run.outputs.built-currents-tiles-caps == 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ steps.plan.outputs.cache-paths-currents-tiles-caps }}
+          key: ${{ steps.plan.outputs.cache-key-currents-tiles-caps }}
 
       - name: Upload the site
         if: steps.run.outputs.deploy == 'true'

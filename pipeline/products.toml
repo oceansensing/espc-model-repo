@@ -65,40 +65,83 @@ timeout_minutes = 30
 cmd = ["python3", "scripts/fetch-currents.py"]
 lane = "hycom"
 
-# **One product, not four**, and the reason is that they are one fetch and one
-# hour. The three depth-averaged caps are computed from the same profile read
-# that the levels come from, published in the same run, and must carry the same
-# model run and valid time — so they share a fate, an age and a step. Splitting
-# them into their own `[products.*]` would give the orchestrator four things to
-# hold at one hour where the pipeline already guarantees it.
-[products.currents]
-title = "Currents at the surface and 50 m, and averaged to 200, 350 and 1000 m (ESPC)"
+# **Three products, one per upstream READ — the 2026-08-26 lesson.** This
+# was one product ("they are one fetch and one hour... they share a fate"),
+# and the day the quality gate landed showed the fate boundary was drawn in
+# the wrong place: HYCOM corrupted the z=14 read and the profile read while
+# the z=0 read stayed clean, so a per-product hold would have held a correct,
+# operationally critical surface hostage to the broken depths. Failures are
+# per read, so fates are per read:
+#
+#   currents-surface  the z=0 level read
+#   currents-50m      the z=14 level read
+#   currents-caps     the ONE shared profile read the three averages share
+#
+# The caps stay one product deliberately: they are averages of the same
+# profile fetch, cannot fail independently (all three corrupted together),
+# and splitting them would triple the profile reads their shared fetch
+# exists to avoid. Still one STEP — the fetch is shared; only the fates,
+# namespaces, tiles and quality verdicts split. The `writes` globs mirror
+# `DOMAINS` in fetch-currents.py; a file matching no product is a fence
+# failure, which is the loud shape a new region or depth fails in until
+# both sides learn it.
+[products.currents-surface]
+title = "Currents at the surface (ESPC)"
 step = "currents"
-roots = [
-  "currents.json", "currents-50m.json",
-  "currents-avg200m.json", "currents-avg350m.json", "currents-avg1000m.json",
+roots = ["currents.json"]
+writes = [
+  "currents.json", "currents-f*h.json",
+  "currents-atlantic.json", "currents-atlantic-f*h.json",
+  "currents-arctic.json", "currents-arctic-f*h.json",
+  "currents-antarctic.json", "currents-antarctic-f*h.json",
 ]
-writes = ["currents*.json"]
 max_age_hours = 9
-namespace = ["python3", "scripts/fetch-currents.py", "--namespace"]
-# The physics gate — see the fetcher's own quality block for the constants
-# and the 2026-08-26 striped-ocean yield that forced it. A rejection holds
-# the product exactly like an outage: previous fields served, no tiles
-# rebuilt from the bad grids.
-quality = ["python3", "scripts/fetch-currents.py", "--quality"]
+namespace = ["python3", "scripts/fetch-currents.py", "--namespace", "--only=surface"]
+quality = ["python3", "scripts/fetch-currents.py", "--quality", "--only=surface"]
 
-[products.currents.tiles]
-build = ["python3", "scripts/fetch-currents.py", "--tiles"]
+[products.currents-surface.tiles]
+build = ["python3", "scripts/fetch-currents.py", "--tiles", "--only=surface"]
 key = ["python3", "scripts/fetch-currents.py", "--tile-key"]
-cache = "currents-tiles"
-# Each tile directory belongs to one grid, and must be its hour. A `*` in the
-# directory carries into the grid name — the forecast frames are named for
-# their lead, and the lead moves with the run's lateness.
+cache = "currents-tiles-surface"
 match = [
   ["tiles", "currents.json"],
-  ["tiles-50m", "currents-50m.json"],
   ["tiles-f*h", "currents-f*h.json"],
+]
+
+[products.currents-50m]
+title = "Currents at 50 m (ESPC)"
+step = "currents"
+roots = ["currents-50m.json"]
+writes = ["currents*-50m*.json"]
+max_age_hours = 9
+namespace = ["python3", "scripts/fetch-currents.py", "--namespace", "--only=50m"]
+quality = ["python3", "scripts/fetch-currents.py", "--quality", "--only=50m"]
+
+[products.currents-50m.tiles]
+build = ["python3", "scripts/fetch-currents.py", "--tiles", "--only=50m"]
+key = ["python3", "scripts/fetch-currents.py", "--tile-key"]
+cache = "currents-tiles-50m"
+match = [
+  ["tiles-50m", "currents-50m.json"],
   ["tiles-50m-f*h", "currents-50m-f*h.json"],
+]
+
+[products.currents-caps]
+title = "Currents averaged to 200, 350 and 1000 m (ESPC)"
+step = "currents"
+roots = [
+  "currents-avg200m.json", "currents-avg350m.json", "currents-avg1000m.json",
+]
+writes = ["currents*-avg*.json"]
+max_age_hours = 9
+namespace = ["python3", "scripts/fetch-currents.py", "--namespace", "--only=caps"]
+quality = ["python3", "scripts/fetch-currents.py", "--quality", "--only=caps"]
+
+[products.currents-caps.tiles]
+build = ["python3", "scripts/fetch-currents.py", "--tiles", "--only=caps"]
+key = ["python3", "scripts/fetch-currents.py", "--tile-key"]
+cache = "currents-tiles-caps"
+match = [
   ["tiles-avg200m", "currents-avg200m.json"],
   ["tiles-avg350m", "currents-avg350m.json"],
   ["tiles-avg1000m", "currents-avg1000m.json"],
