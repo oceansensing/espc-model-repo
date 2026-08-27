@@ -25,9 +25,12 @@ was the alternative, and three faults were found in that file in a single day
 ## Live since 2026-08-22 — and what changed on 2026-08-27
 
 Everything the section that used to sit here called "not set up yet" is
-set up: the crons run (hourly at :05, plus :32 on the 6-hour boundaries,
-offset from the sibling so two repositories never read HYCOM in the same
-minute), `PIPELINES_SSH_KEY` is armed with its own read-only deploy key,
+set up: the crons run (`7,27,47` past each hour, plus `:12` on the 3-hour
+anchor boundaries, offset from the sibling so two repositories never read
+HYCOM in the same minute — it was hourly at :05 until 2026-08-27, when
+GitHub was measured delivering that schedule 45 min to 4 h 19 min apart
+and never at the nominal minute), `PIPELINES_SSH_KEY` is armed with its own
+read-only deploy key,
 and the `published` branch exists and force-updates each publish.
 
 `pipeline/products.toml` declares **three currents products, one per
@@ -44,9 +47,34 @@ Each product declares a **physics quality gate**
 plus correlation against a running daily mean (`*-vbar1d.json`, folded
 only from accepted base fields, judged-then-folded, deduped by valid
 hour). A failing domain HOLDS — previous publish served, reason in
-`status/status.json` — while the others publish. The fetch itself
-probe-exits when nothing is new and nothing is missing, so most hourly
-runs cost two metadata reads.
+`status/status.json` — while the others publish.
+
+**And the tree says when it is serving something old** (2026-08-27).
+`status.json` carries `ageHours`, the distance from the reader's clock to
+the NEAREST published frame, and `stale` against each product's
+`max_age_hours` — 2 h here, because the anchor publishes frames that
+bracket the reader and the nearest is at most 1.5 h away by construction.
+It was 9 h, which is six times the owner's bar and measured the wrong
+quantity besides: `stale` compared when the pipeline last PUBLISHED, so a
+run republishing a nine-hour-old field every hour reported fresh. Old with
+a fate of `fresh` means upstream has nothing newer and is a note; old with
+any other fate means the data was there and was not published, and the
+cross-origin watchdog in the site repository opens an issue for it. The fetch itself
+probe-exits when nothing is new and nothing is missing, so most runs cost
+two metadata reads — which is what makes three attempts an hour polite to
+an upstream that has been answering some requests with timeouts.
+
+**The quality gate judges SPEED, not velocity** (2026-08-27, the owner's
+call). The motion that dominates where the mean flow is weak is rotary —
+near-inertial and semidiurnal, and at high latitude those periods converge
+— so the vector sweeps a circle while |v| barely moves, and the old check
+read the u component alone. Measured on live grids 3 h apart against the
+column-broadcast defect rebuilt from the same data, the good cases rose
+from 0.496/0.578/0.863 to 0.742/0.799/0.922 while the corrupt ones did not
+move: separation 0.52 to 0.70, threshold unchanged at 0.35. The reference
+is a running mean of SPEED folded beside the vector one, and a median
+speed-ratio band backstops the scale error that correlation structurally
+cannot see.
 
 **Known open decision** (recorded in the site's `PLAN.md`): a held
 domain at an older hour of the same model run fails the site contract's
