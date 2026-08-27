@@ -97,7 +97,13 @@ writes = [
   "currents-arctic.json", "currents-arctic-f*h.json", "currents-arctic-vbar1d.json",
   "currents-antarctic.json", "currents-antarctic-f*h.json", "currents-antarctic-vbar1d.json",
 ]
-max_age_hours = 9
+# Two, not nine. The anchor publishes frames that BRACKET the
+# reader (REFRESH_HOURS in fetch-currents.py is the model's own
+# 3-hour step), so the nearest frame is at most 1.5 h away by
+# construction. Nine could not have caught anything: it was six
+# times the owner's stated bar, and it measured the wrong
+# quantity besides.
+max_age_hours = 2
 namespace = ["python3", "scripts/fetch-currents.py", "--namespace", "--only=surface"]
 quality = ["python3", "scripts/fetch-currents.py", "--quality", "--only=surface"]
 
@@ -115,7 +121,13 @@ title = "Currents at 50 m (ESPC)"
 step = "currents"
 roots = ["currents-50m.json"]
 writes = ["currents*-50m*.json"]
-max_age_hours = 9
+# Two, not nine. The anchor publishes frames that BRACKET the
+# reader (REFRESH_HOURS in fetch-currents.py is the model's own
+# 3-hour step), so the nearest frame is at most 1.5 h away by
+# construction. Nine could not have caught anything: it was six
+# times the owner's stated bar, and it measured the wrong
+# quantity besides.
+max_age_hours = 2
 namespace = ["python3", "scripts/fetch-currents.py", "--namespace", "--only=50m"]
 quality = ["python3", "scripts/fetch-currents.py", "--quality", "--only=50m"]
 
@@ -135,7 +147,13 @@ roots = [
   "currents-avg200m.json", "currents-avg350m.json", "currents-avg1000m.json",
 ]
 writes = ["currents*-avg*.json"]
-max_age_hours = 9
+# Two, not nine. The anchor publishes frames that BRACKET the
+# reader (REFRESH_HOURS in fetch-currents.py is the model's own
+# 3-hour step), so the nearest frame is at most 1.5 h away by
+# construction. Nine could not have caught anything: it was six
+# times the owner's stated bar, and it measured the wrong
+# quantity besides.
+max_age_hours = 2
 namespace = ["python3", "scripts/fetch-currents.py", "--namespace", "--only=caps"]
 quality = ["python3", "scripts/fetch-currents.py", "--quality", "--only=caps"]
 
