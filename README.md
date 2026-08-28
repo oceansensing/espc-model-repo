@@ -84,7 +84,7 @@ is a running mean of SPEED folded beside the vector one, and a median
 speed-ratio band backstops the scale error that correlation structurally
 cannot see.
 
-**Known open decision** (recorded in the site's `PLAN.md`): a held
+**Known open decision** (recorded in this repository's `PLAN.md`): a held
 domain at an older hour of the same model run fails the site contract's
 ESPC hour rule, which sets deploy=False and freezes the whole Pages
 tree until the domain heals or the run changes. Whether a held product

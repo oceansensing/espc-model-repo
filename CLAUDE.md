@@ -1,0 +1,109 @@
+# CLAUDE.md
+
+Guidance for working in this repository. The **design** — what this
+repository is for, what it publishes, why it exists apart from
+`realtime-data-repo` — lives in `README.md` and is not repeated here. This
+file is the operator's half, and it is short because this repository holds no
+code.
+
+<!-- DOC-DOCTRINE v1 begin — identical in all four repositories; `check:docs` holds them equal. Edit one, sync all. -->
+## Where truth lives, and what "update docs" means
+
+Four repositories carry this project, and each carries the same four
+documents: `oceanlet.js` (the engine), `oceansensing.github.io` (the site,
+and every fetch script), `realtime-data-repo` (the orchestrator both data
+repositories run, and most products), `espc-model-repo` (the ESPC currents).
+Each document answers exactly one question.
+
+| file | answers | tense | it is stale when |
+| --- | --- | --- | --- |
+| `README.md` | what this is, how to run it | present | a reader types a command or trusts a number and is wrong |
+| `CLAUDE.md` | what must not be got wrong here | imperative | the next session is about to repeat a mistake |
+| `PLAN.md` | what happened, measured, and what is open | dated past | "why is it like this?" has no answer here |
+| `DECISIONS.md` | which one-way door closed, and when | dated | a reversal would cost a migration and nothing says so |
+
+Frozen interfaces and deliberate divergences live beside them under `docs/` —
+the compat ledger, the renderer contract — one row per rule, each pinned by a
+test.
+
+**"Update docs" means a sweep of all four repositories, not the one in hand.**
+Docs are part of the change, never a follow-up and never a separate ask. Five
+questions, asked of every repository the change touched:
+
+1. Did a command, a path, a script name or a number a reader would type or
+   trust move? → `README.md`
+2. Did a rule, a trap, or a things-that-must-move-together change or come to
+   light? → `CLAUDE.md`
+3. Did something *happen* — a measurement, a defect, a yield, a mechanism, an
+   open question opened or answered? → `PLAN.md`
+4. Did a one-way door close? → `DECISIONS.md`
+5. **Does a document in another repository now say something false because of
+   this change?** → fix it there, in the same sitting.
+
+**Question 5 is the one that gets missed, and it is why this block is
+identical in four places.** Measured 2026-08-28: one tile-tier measurement
+falsified `espc-model-repo`'s README, its `products.toml` header and the
+site's README at once. Two were found; the third took a reminder from the
+owner, who then asked for this doctrine.
+
+A number in prose is only as good as its anchor. `check:docs` gates every
+claim it can tie to a source constant and nothing else, so when a figure has
+no anchor — a measurement, a live reading, a byte count off a build log —
+write **where it was measured and when**, or the next reader cannot tell a
+fact from a guess that aged.
+<!-- DOC-DOCTRINE v1 end -->
+
+## The thing to understand before changing anything
+
+**A fault here is almost never fixed here.** The fetchers live in
+`oceansensing.github.io/scripts/`, the orchestrator in
+`realtime-data-repo/pipeline/`, and both are checked out at run time. What
+this repository owns is `pipeline/products.toml` (the declaration), the
+workflow, the crons, and the published tree. So:
+
+- A change to how a product is fetched, judged or assembled lands here on the
+  **next run**, from a push to the *other* repository. Nothing needs pushing
+  here for it to take effect, and pushing here will not make it happen sooner.
+- The corollary, and it has cost real Actions minutes: when a defect in this
+  repository's output is traced to a fetcher or the orchestrator, the urgent
+  push belongs to that repository — and even there it rides the next cron.
+  Ask what ships the fix before reaching for an immediate deploy.
+
+## Reading a run
+
+Start with the data, not the Actions page:
+
+```sh
+curl -s https://oceansensing.org/espc-model-repo/status/status.json | python3 -m json.tool
+```
+
+Each product carries `fate`, `stale`, `ageHours`, `hour`, `modelRun` and, when
+held, a one-sentence `reason`. `status/receipt.json` beside it says what was
+**built** and what was **withheld**, which is the only place a missing tile
+tier is visible: a tier that was never written cannot be withheld, so it is
+named there with its reason rather than inferred from a directory walk.
+
+**`deploy: false` freezes the whole tree, every product**, including ones that
+fetched cleanly. That is the consumer contract refusing the tree, and while it
+holds, `status.json` freezes with it — so a reason shown on the live tree can
+be older than the fault a run is actually hitting. Read the run log, not only
+the published status, when the two could disagree.
+
+## What has already gone wrong here
+
+- **A tile build that produced nothing reported success** (2026-08-28). With
+  HYCOM's `.das` timing out, `fetch-currents.py --tiles` returned 0 on the
+  strength of `currents.json` — a *grid* the call was never asked to build —
+  and four of the five current layers went on advertising a `tileIndex`
+  against a 404. Fixed in both other repositories: the site's `outage_exit`
+  refuses to degrade a tiles call, and the orchestrator now accounts for an
+  absent tier whatever the product's fate. **Rebuilding is for fresh
+  products; accounting is for all of them.**
+- **The storage ceiling is real and it is latent.** Measured 2026-08-28: the
+  tile tier is 738.7 MB and the grids 93 MB, so this repository is 832 MB of
+  a 1 GB Pages cap — but a broken tile build makes it read as 93 MB, which
+  looks like room that is not there. Measure the tier from a *successful*
+  run's byte log, never from the current tree.
+- **HYCOM fails partially, not cleanly.** One run can rebuild the caps and
+  surface tiers and still produce nothing for 50 m. Do not read one product's
+  success as the upstream being healthy.

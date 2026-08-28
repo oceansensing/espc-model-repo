@@ -16,13 +16,14 @@
 # The crons below are the ones `realtime-data-repo` runs, offset so the two do
 # not read HYCOM at the same minute; uncomment them when the products land.
 on:
+  # **No `mode` input, because there is no longer a mode.** It offered
+  # `full | light` and passed the choice straight to `orchestrate.py plan
+  # --mode`, which has accepted only `full` since the light path was retired
+  # on 2026-08-27 — so dispatching `light` failed the run outright. Found
+  # 2026-08-28 by the cross-repository doc sweep: the orchestrator that
+  # dropped the mode lives in `realtime-data-repo`, and nothing pointed from
+  # that change to this dropdown.
   workflow_dispatch:
-    inputs:
-      mode:
-        description: 'full fetches everything; light only the fast products'
-        type: choice
-        options: [full, light]
-        default: full
   # **On since 2026-08-22**, in the same change that removed the currents from
   # `realtime-data-repo` and added this origin to the site's `MAP_ORIGINS` —
   # one owner per root, never two, which `check:docs` refuses to let drift.
@@ -170,27 +171,6 @@ jobs:
         working-directory: engine
         run: python3 pipeline/test_orchestrate.py
 
-      # **Every scheduled run here is full, and the light branch is gone rather
-      # than left comparing against a cron string this workflow does not
-      # have.** The sibling keeps one, because a light run is how it refreshes
-      # storms and gliders three times an hour; this repository has no fast
-      # product to refresh, so it schedules none — and a comparison against
-      # `45,25 * * * *` would read to anybody as evidence that one exists.
-      # A claim that migrates with a copy is how this project's docs went
-      # wrong about a sibling's push trigger for a day.
-      #
-      # `workflow_dispatch` can still ask for light, which fetches nothing
-      # here and republishes the seed. That is a real thing to want exactly
-      # once — checking the assemble and publish path without touching HYCOM.
-      - name: Decide the mode
-        id: mode
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "mode=full" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Seed the stage from the last publish
         env:
           PIPELINE_ROOT: ${{ github.workspace }}
@@ -200,7 +180,7 @@ jobs:
         id: plan
         env:
           PIPELINE_ROOT: ${{ github.workspace }}
-        run: python3 engine/pipeline/orchestrate.py plan --mode "${{ steps.mode.outputs.mode }}"
+        run: python3 engine/pipeline/orchestrate.py plan --mode full
 
       # **One Restore and one Save per `cache` name in products.toml.** Nothing
       # loops here, because a matrix would need separate jobs — so this pair
@@ -221,21 +201,18 @@ jobs:
         with:
           path: ${{ steps.plan.outputs.cache-paths-currents-tiles-surface }}
           key: ${{ steps.plan.outputs.cache-key-currents-tiles-surface }}
-          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-currents-tiles-surface || '' }}
 
       - name: Restore 50 m tiles
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ${{ steps.plan.outputs.cache-paths-currents-tiles-50m }}
           key: ${{ steps.plan.outputs.cache-key-currents-tiles-50m }}
-          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-currents-tiles-50m || '' }}
 
       - name: Restore cap tiles
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ${{ steps.plan.outputs.cache-paths-currents-tiles-caps }}
           key: ${{ steps.plan.outputs.cache-key-currents-tiles-caps }}
-          restore-keys: ${{ steps.mode.outputs.mode == 'light' && steps.plan.outputs.cache-prefix-currents-tiles-caps || '' }}
 
       - name: Fetch, validate, assemble
         id: run
