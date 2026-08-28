@@ -73,10 +73,30 @@ sibling has none either.
 ## 2026-08-28: one poisoned time step, and it does not answer the same twice
 
 Reported by the owner at about 17:40Z as "the map is out of date", with a
-share hash carrying `Currents 0-200m mean (ESPC)`. Both depth products were
-`held` and had been since 11:11Z, stuck at valid `2026-08-28T09:00Z` and last
-published at 09:39Z — nine hours old by the time it was reported. The surface
-was `fresh` at 15:00Z throughout.
+share hash carrying `Currents 0-200m mean (ESPC)`. The surface was `fresh` at
+15:00Z throughout; both depth products were `held`.
+
+**The timeline, from the run logs rather than from `status.json`** — which
+freezes `checked` on a held product and so cannot tell you this:
+
+| | |
+| --- | --- |
+| 11:11Z run | depth grids clean, 0.60-1.10 anisotropy, published. The last good one. |
+| 15:32Z run | **first rejection**, at 2.3e14. |
+| 16:21Z run | rejected again, at 1.1e14 — a different number for the same field. |
+| 16:21Z-18:40Z | no runs at all; GitHub dispatched none for two hours. |
+| ~17:40Z | the owner reports. |
+
+So at the report the hold was 2.1 h old, the last depth publish was 6.5 h
+back, and the newest published depth frame was valid 12:00Z.
+
+**What a reader actually saw was 5.7 h old, not nine.** The product `hour` is
+the base frame; each depth product also publishes its `+3h` frame — valid
+12:00Z — and the map opens on whichever published valid time is nearest the
+reader's clock. Read off the live page at 18:34Z, the credit line said *"valid
+2026-08-28 12Z (-6 h), 2026-08-27 12Z run"*. The visible gap between the
+surface layer and the depth layers was three hours. Quoting `hour` as "what
+the map is showing" overstates the age by one frame, every time.
 
 The gate's readings from the 16:23Z run, against a threshold of 2.0: the 50 m
 domain 6.5e13 to 1.1e14 across all four grids; the caps 3.72 / 4.00 / 4.26
