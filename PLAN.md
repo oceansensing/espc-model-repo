@@ -80,6 +80,13 @@ sibling has none either.
   freeze-until-heal. The rule lives in the site's `test-schema.mjs` and is the
   consumer's to own; nothing has been changed unilaterally.
 - **The second lead**, above.
+- **ESPC skipped its 2026-08-27 12Z run.** Probed directly at 03:39Z on
+  08-28: HYCOM's `time_run` axis offered nothing newer than 2026-08-26 12Z,
+  so this repository served a +39 h forecast with every signal healthy — the
+  valid time was current, which is what `ageHours` measures. Upstream, not
+  ours, and the map's credit line said so. A `runAgeHours` signal was
+  proposed and the owner deferred it; it is written up in
+  `realtime-data-repo`'s PLAN, which owns `status/status.json`.
 - **HYCOM's `.das` is intermittently slow rather than down**, and one run can
   rebuild two tiers while a third produces nothing. Whether that wants a
   longer per-try timeout or a fetch that tolerates one dead product is not
