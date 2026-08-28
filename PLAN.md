@@ -120,11 +120,15 @@ domains to the 08-26T12Z run and publish 18:00Z depth water beside 15:00Z
 surface water — the hour rule that is already the owner's open decision
 below, so nothing was changed.
 
-**Also on 08-28, and the reason the owner had to find this by eye:** the
-map's pipeline health line read `dataBase`'s status document alone, so this
-origin's statement — the only one that said anything was wrong — was never
-fetched. Fixed in `oceansensing.github.io` the same evening, with its record
-there.
+**Two instruments, two audiences, and only one had been taught about this
+origin.** The site's watchdog caught it correctly and sixteen minutes before
+the owner did — GitHub issue #2 at 17:24Z, *"espc-model-repo published
+behind: currents-50m (4.4 h), currents-caps (4.4 h). Newer data existed and
+was not published — this one is ours."* Its origin sweep was fixed on 08-27.
+The map's own pipeline health line was not: it read `dataBase`'s status
+document alone, so this origin's statement never reached the page the owner
+was actually looking at. Fixed in `oceansensing.github.io` the same evening,
+with its record there.
 
 ## Open
 
