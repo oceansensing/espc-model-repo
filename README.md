@@ -3,10 +3,18 @@
 The US Navy ESPC-D-V02 half of the ocean map's data, published to
 <https://oceansensing.org/espc-model-repo/>.
 
-It exists because ESPC is 91% of what the map publishes — 114 MB of committed
-grids and 505 MB of CI-built tiles against 59 MB of everything else — and
-GitHub Pages caps a site at 1 GB. Two depth-integrated products were the
-change that would not fit.
+It exists because ESPC is most of what the map publishes, and GitHub Pages
+caps a site at 1 GB. Two depth-integrated products were the change that
+would not fit.
+
+**Measured 2026-08-28**, from the 2026-08-27 17:21Z run's own byte log rather
+than from a projection: **93 MB of grids on the `published` branch and
+738.7 MB of CI-built tiles across ten sets** — two leads each for surface,
+50 m and the three caps, 71–78 MB per set — so **832 MB, 81% of the cap**.
+The earlier figures here (114 MB and 505 MB) predated the third cap and the
+second lead. What headroom exists is one lead per depth, which would halve
+the tier; that is the "two frames per window" decision, and reopening it is
+the owner's call.
 
 ## It holds no code
 

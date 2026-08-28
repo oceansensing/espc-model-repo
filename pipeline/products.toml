@@ -2,11 +2,23 @@
 #
 # **The Navy temperature and salinity stay in `realtime-data-repo`**, the
 # owner's call on 2026-08-22, after the storage was measured rather than
-# estimated. A tiled u/v product is about 88 MB per frame; the three
-# depth-averaged current layers planned here are 528 MB of tiles between
-# them, and with sst and sss as well this repository came to ~969 MB against
-# a 1 GB Pages limit. Without them it is ~880 MB, which is still tight and is
-# why whether those layers need full 1/12 deg tiles is still open.
+# estimated. The projection then: ~88 MB per tiled u/v frame, 528 MB for the
+# three depth-averaged layers, ~969 MB with sst and sss against a 1 GB Pages
+# limit, ~880 MB without them.
+#
+# **Re-measured 2026-08-28 from the pipeline's own byte log, and the call
+# stands.** A frame is 71-78 MB rather than 88, the caps are 433.6 MB rather
+# than 528, and the whole tier is 738.7 MB over ten sets — two leads each for
+# surface, 50 m and the three caps. With 93 MB of grids that is 832 MB, 81%
+# of the cap. Adding ssh (no tile tier at all), the ice (57.6 MB), sst
+# (44.0) and sss (45.1) lands at ~982 MB: 96%, about 42 MB spare, which is
+# less than one frame. So the projection was right and slightly optimistic,
+# and nothing about the machinery is what blocks the move.
+#
+# The headroom, if it is wanted, is the SECOND LEAD rather than the tiles'
+# resolution: one lead per depth halves the tier and puts all four Navy
+# products near 613 MB. That reopens "two frames per window", which is the
+# owner's call and not this file's.
 #
 # It also gives this repository one subject rather than two: the currents at
 # every depth the model offers, from one model, in one place.
