@@ -16,6 +16,11 @@ second lead. What headroom exists is one lead per depth, which would halve
 the tier; that is the "two frames per window" decision, and reopening it is
 the owner's call.
 
+`CLAUDE.md` is the operator's half — how to read a run, and what has already
+gone wrong. `PLAN.md` is the running record: what has been measured here, and
+what is open. Which document gets what, across all four repositories of this
+project, is the doctrine block at the top of `CLAUDE.md`.
+
 ## It holds no code
 
 The **fetchers** live in [`oceansensing.github.io`](https://github.com/oceansensing/oceansensing.github.io)

@@ -65,7 +65,10 @@ first outing — which is the argument for the doctrine better than the doctrine
 makes it.
 
 The input, the mode step and the dead `restore-keys` are gone; the plan step
-passes `--mode full` outright.
+passes `--mode full` outright. A second pass over the same workflow found the
+comment that had justified those `restore-keys` still standing over their
+absence, and claiming they were "kept identical to the sibling's" — the
+sibling has none either.
 
 ## Open
 

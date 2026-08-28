@@ -189,9 +189,11 @@ jobs:
       # invisible otherwise: a cache nothing restores is not an error, it is
       # tiles rebuilt from scratch every run, with correct output.
       #
-      # The prefix restore is light-only and inert here, since no light run is
-      # scheduled — kept identical to the sibling's so the two do not drift in
-      # a way somebody has to notice.
+      # **No `restore-keys` on these, and the sibling has none either.** They
+      # were prefix restores for light runs and were kept here, inert, only so
+      # the two workflows would not drift. The light mode went on 2026-08-27
+      # and the prefixes went with it on 2026-08-28; an exact key or a cold
+      # rebuild is the whole of it now.
       # Three pairs now, one per fault-domain product — the split that lets a
       # clean surface publish while a corrupt depth holds. `plan` names any
       # declared cache with neither step, so a fourth product cannot silently
