@@ -95,6 +95,23 @@ holds, `status.json` freezes with it — so a reason shown on the live tree can
 be older than the fault a run is actually hitting. Read the run log, not only
 the published status, when the two could disagree.
 
+**A held product does not by itself mean `deploy: false`.** Since
+`realtime-data-repo`'s `58a7207`, contract failures attributable only to
+products this run already held deploy the rest — so the ordinary depth-hold
+prints four `FAIL` lines and `run: deploy=True` in the same log. FAILs in the
+log are not the same question as a frozen tree; check the `run:` line.
+
+**And `checked` freezes for a held product — read `generated` first.**
+`checked` means *the last time the pipeline successfully attempted this
+product*, so one held every twenty minutes for six hours advertises a
+`checked` six hours old. That reads as "nothing has looked at this since",
+which is the opposite of what is happening, and it cost twenty minutes on
+2026-08-28. `generated` at the top of the document is the run that actually
+ran; a stale `checked` beside a current `generated` is the ordinary
+signature of a hold. (`realtime-data-repo`'s `CLAUDE.md` says `checked`
+going quiet **across products** means the pipeline is not completing — that
+is the plural case, and it is a different reading from this one.)
+
 ## What has already gone wrong here
 
 - **A tile build that produced nothing reported success** (2026-08-28). With
@@ -113,3 +130,19 @@ the published status, when the two could disagree.
 - **HYCOM fails partially, not cleanly.** One run can rebuild the caps and
   surface tiers and still produce nothing for 50 m. Do not read one product's
   success as the upstream being healthy.
+- **A step can serve the surface and lie below it, and the probe cannot see
+  that** (2026-08-28). `serves()` in `fetch-currents.py` reads `LEVELS[0]`
+  only, on a docstring asserting that a step serving 0 m serves 50 m.
+  Measured straight off `tds.hycom.org` that day: at time index 73 — valid
+  15:00Z, the last hour the 08-27T12Z run owns in an interleaved `best`
+  aggregation — the surface read clean and every deeper level returned
+  garbage, **five identical requests giving four different answers** (17-25
+  m/s against an `actual_range` topping out at 5.5; a neighboring level's row
+  broadcast down every latitude; once a near-zero field). Its neighbors,
+  indices 70-72 and 74-76, were all clean. So the probe passes, the surface
+  publishes, and both depth domains fetch poison and hold — for six hours, as
+  it turned out, because the anchor stays within `MAX_FROM_ANCHOR` of the
+  poisoned hour that long. **The gate is the only thing standing between that
+  and a published field; do not weaken it to clear a hold.** The fix to the
+  probe is not made because it collides with the hour rule — the owner's open
+  decision in `PLAN.md`.
