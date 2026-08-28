@@ -130,9 +130,13 @@ is the plural case, and it is a different reading from this one.)
 - **HYCOM fails partially, not cleanly.** One run can rebuild the caps and
   surface tiers and still produce nothing for 50 m. Do not read one product's
   success as the upstream being healthy.
-- **A step can serve the surface and lie below it, and the probe cannot see
-  that** (2026-08-28). `serves()` in `fetch-currents.py` reads `LEVELS[0]`
-  only, on a docstring asserting that a step serving 0 m serves 50 m.
+- **A step can serve the surface and lie below it** (2026-08-28). `serves()`
+  in `fetch-currents.py` read `LEVELS[0]` only, on a docstring asserting that
+  a step serving 0 m serves 50 m. **FIXED the same day, on the owner's call**
+  — it now probes every depth a run reads (`probe_depths()` = surface, 50 m
+  and the deepest profile level) and refuses a window whose latitude rows are
+  all identical or whose speeds no current reaches. Keep the history, because
+  the assumption is the tempting one:
   Measured straight off `tds.hycom.org` that day: at time index 73 — valid
   15:00Z, the last hour the 08-27T12Z run owns in an interleaved `best`
   aggregation — the surface read clean and every deeper level returned
@@ -143,6 +147,14 @@ is the plural case, and it is a different reading from this one.)
   publishes, and both depth domains fetch poison and hold — for six hours, as
   it turned out, because the anchor stays within `MAX_FROM_ANCHOR` of the
   poisoned hour that long. **The gate is the only thing standing between that
-  and a published field; do not weaken it to clear a hold.** The fix to the
-  probe is not made because it collides with the hour rule — the owner's open
-  decision in `PLAN.md`.
+  and a published field; do not weaken it to clear a hold.**
+
+  Two things about the fix that are easy to get wrong later. **The probe is
+  not domain-aware and must not become so**: every `--only` invocation
+  re-resolves `frames()` after the shared fetch has written the grids, so a
+  per-domain answer would let `--tiles --only=surface` build tiles for an
+  hour the grid was never fetched at, under the grid's own filename. And
+  **bytes coming back is not the test** — the corrupt reads were HTTP 200
+  full of plausible floats, so `probe_verdict` is the part that earns the
+  extra reads. Cost measured: 0.4 s for three depths, 0.2 s when it refuses,
+  against ~1 s for the old single read.

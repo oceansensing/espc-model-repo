@@ -74,8 +74,18 @@ a fate of `fresh` means upstream has nothing newer and is a note; old with
 any other fate means the data was there and was not published, and the
 cross-origin watchdog in the site repository opens an issue for it. The fetch itself
 probe-exits when nothing is new and nothing is missing, so most runs cost
-two metadata reads — which is what makes three attempts an hour polite to
-an upstream that has been answering some requests with timeouts.
+the two metadata reads plus a step probe — three 10x10 windows per candidate
+frame, 0.4 s, measured 2026-08-28 — which is what makes three attempts an
+hour polite to an upstream that has been answering some requests with
+timeouts.
+
+**The step probe reads every depth a run reads, not just the surface**
+(2026-08-28). It refuses a step whose window comes back with every latitude
+row identical, or with speeds no current reaches; HYCOM has served both,
+under HTTP 200, at one valid hour while the surface stayed clean. A refused
+step sends `pick_nearest` to an older run, so all three products move
+together to an hour that serves at every depth — which is also what keeps
+them agreeing on one hour.
 
 **The quality gate judges SPEED, not velocity** (2026-08-27, the owner's
 call). The motion that dominates where the mean flow is weak is rotary —

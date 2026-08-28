@@ -128,17 +128,51 @@ not a threshold that wants moving.
 The three-product split did exactly what it was built for: a clean surface
 published while both depth domains held, with the reason in `status.json`.
 
-**What this repository cannot currently do is step off the poisoned hour.**
-`serves()` in `fetch-currents.py` probes `LEVELS[0]` only, on a docstring
-asserting that a step serving 0 m serves 50 m — which is the assumption this
-step falsifies. Replaying `pick_nearest` with the real constants
-(`REFRESH_HOURS` 3, `MAX_FROM_ANCHOR` 6.0, offsets [0, 3]) against the live
-time axis: index 73 stays selected at the 18:00Z and 21:00Z anchors and only
-drops out at the 00:00Z anchor on 08-29, so the hold self-heals about six
-hours after the report. Making the probe depth-aware would walk the depth
-domains to the 08-26T12Z run and publish 18:00Z depth water beside 15:00Z
-surface water — the hour rule that is already the owner's open decision
-below, so nothing was changed.
+**The pipeline could not step off the poisoned hour, and now it can.**
+`serves()` probed `LEVELS[0]` only, on a docstring asserting that a step
+serving 0 m serves 50 m — the assumption this step falsifies. Replaying
+`pick_nearest` with the real constants (`REFRESH_HOURS` 3, `MAX_FROM_ANCHOR`
+6.0, offsets [0, 3]) against the live axis: index 73 stayed selected at the
+18:00Z and 21:00Z anchors and would only have dropped out at the 00:00Z
+anchor on 08-29 — about six hours of hold from the report.
+
+**Fixed the same evening, on the owner's instruction.** The probe now reads
+every depth a run reads and judges what comes back:
+
+- `probe_depths()` — the surface, 50 m and the deepest profile level
+  (`[0, 14, 32]` as configured). **Deliberately not the `--only` domain's
+  depth**: every `--only` invocation re-resolves `frames()` after the shared
+  fetch has written the grids, so a per-domain answer would let
+  `--tiles --only=surface` build tiles for an hour the grid was never
+  fetched at, under the grid's own filename.
+- `probe_verdict()` — pure, and the part that earns the extra reads, because
+  the corrupt reads were HTTP 200 full of plausible floats. It refuses a
+  window whose latitude rows are all identical, or whose speeds exceed
+  10 m/s against a dataset `actual_range` topping out at 5.505. Below 20 wet
+  cells it declines to judge rather than condemning a step for being over
+  land.
+- The window went from 3x3 at one depth to **10x10 at three**, because two
+  latitude rows 0.08 deg apart are identical often enough at 0.001 m/s that a
+  small window could not carry the test. Measured over 21 clean readings —
+  seven steps at three depths — every one gave **10 distinct rows out of
+  10**; the poisoned step gave **1**. No near miss in that sample.
+
+Nine self-test cases, all five mutations killed (drop either refusal, probe
+the surface only, drop the wet-cell floor, refuse everything). **Driven
+against live HYCOM while the fault was still up**: `serves(73)` False,
+`serves(71/72/74)` True, and `pick_nearest` walked the 08-27T12Z run past
+and returned T+54 valid 18:00Z and T+57 valid 21:00Z from the 08-26T12Z run
+— **-1 h from the clock**, against the -6.6 h the held layers were showing.
+
+What it costs: a poisoned depth can walk the **surface** back a run too,
+since selection has one answer for the whole run. That is the deliberate
+trade — the fault domains still stop a bad depth from HOLDING a clean
+surface, which is what they are for, while all three move together to an
+hour that serves, which also keeps the consumer's ESPC hour rule satisfied.
+`MAX_FROM_ANCHOR` bounds how far back that can reach, and here the older run
+held fresher hours than the newer one's poisoned tail. The unbounded half is
+the run's own age — T+54 off a 55 h run — which is exactly the `runAgeHours`
+signal proposed and deferred in `realtime-data-repo`'s PLAN.
 
 **Two instruments, two audiences, and only one had been taught about this
 origin.** The site's watchdog caught it correctly and sixteen minutes before
@@ -158,8 +192,14 @@ with its record there.
   attributable only to held products deploys the rest, and the 2026-08-28
   hold rode exactly that path (`run: deploy=True` under four FAILs) — but it
   is still four FAILs in every run's log while a depth product is held, and
-  the log is what a reader checks. Live on 2026-08-27/28 for hours. Options
-  recorded in the site's PLAN: treat
+  the log is what a reader checks. Live on 2026-08-27/28 for hours.
+
+  **The depth-aware step probe removes one CAUSE of it, not the rule.** A
+  step poisoned below the surface no longer splits the products across two
+  hours, because all three now move together to a step that serves. Any
+  other per-domain hold still can: a held product keeps its previous files
+  at the old hour while its siblings publish the new one. Options recorded
+  in the site's PLAN: treat
   a held product at an older hour of the same run as a note, or accept
   freeze-until-heal. The rule lives in the site's `test-schema.mjs` and is the
   consumer's to own; nothing has been changed unilaterally.
