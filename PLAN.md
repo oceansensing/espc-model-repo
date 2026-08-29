@@ -224,6 +224,36 @@ a claim about the current tree. What was wrong was the tree, for a few
 hours, and it says so in `receipt.json` the whole time — which is the
 withholding doing its job.
 
+## 2026-08-29: a tier may now have holes, and it names them
+
+The tile-key fix above was necessary and not sufficient — the keys agreed and
+every tier was still 404. The cause was older and separate, and it is this
+repository's layers that paid for it:
+
+```
+  ! tile -40_80 failed: water_v[77][0] failed after 4 tries: HTTP Error 500
+! currents unavailable: 1 of 162 tiles failed after 4 tries each (87 not attempted)
+--- tiles currents-surface: exit 1
+withheld  currents-surface/tiles: no readable index.json
+```
+
+**One corner of 162 refused, and the whole tier went.** Every part behaved as
+designed, the withholding included — a tier that is not there is correctly
+declared absent rather than advertised. What was wrong is that 161 good tiles
+were discarded for one transient 500, and 87 corners were never attempted.
+
+Fixed in `oceansensing.github.io`, which owns the fetchers: a tier tolerates
+`gap_budget()` refused corners (5%, shared in `espc_window.py` so the two
+pipelines cannot drift), publishes with `gaps` naming each one, and stops
+early only once that budget is exceeded — past it, the previous complete set
+is kept, which is the case the original all-or-nothing rule was really for.
+
+**What this repository should expect to see.** A tier can now publish with a
+handful of holes; `receipt.json` and the run log say how many, and the site's
+contract check emits a `note` rather than a failure. A tier that is *absent*
+still means absent. If you are reading a tier's byte count against the 738.7
+MB measurement, a tier with gaps is legitimately smaller and says so.
+
 ## Open
 
 - **The ESPC hour-rule collision, and it is the owner's.** One model
