@@ -184,6 +184,46 @@ document alone, so this origin's statement never reached the page the owner
 was actually looking at. Fixed in `oceansensing.github.io` the same evening,
 with its record there.
 
+## 2026-08-29: the depth probe made this repository's tile keys unstable
+
+A regression from the morning's probe change, found the same night by
+reading a run dispatched to prove something else, and fixed. Recorded here
+because the damage landed on this repository's tiles.
+
+The orchestrator runs `fetch-currents.py` **six times per publish** —
+`--tile-key` once per product, then the fetch, `--tiles`, `--namespace` and
+`--quality` — each a fresh process that re-resolves the step selection and
+re-probes HYCOM. Three depth reads per candidate step instead of one is
+three times the exposure to a server that fails per request, and
+`pick_nearest` truncates its frame list on a probe failure rather than
+rejecting the run. So the six invocations stopped agreeing.
+
+Before (2026-08-28T16:22Z) and after (2026-08-29T03:17Z), same three calls:
+
+```
+plan: currents-surface -> ...-r20260827T12-f20260828T15     |  probe failed (exit 1) — unplanned
+plan: currents-50m     -> ...-r20260827T12-f20260828T15     |  ...-r20260827T12-f20260829T03
+plan: currents-caps    -> ...-r20260827T12-f20260828T15     |  ...-r20260827T12-f20260829T03-f20260829T06
+```
+
+**Measured cost, live at 03:35Z:** `tiles-50m/index.json`,
+`tiles-avg200m`, `tiles-avg350m` and `tiles-avg1000m` all **404**, correctly
+withheld with `no readable index.json` while `tiles/index.json` (the
+surface) served 200. Four of the five depth layers drew at the 0.96° global
+grid at every zoom — the "staleness looks worse at high zoom" symptom, from
+a cause that had nothing to do with staleness.
+
+Fixed in `oceansensing.github.io`, which owns the fetcher: one selection per
+publishing slot, shared through `RUNNER_TEMP`, so the first invocation
+resolves it and the other five reuse it. Ten cases, five mutations killed;
+the full record is in that repository's PLAN.
+
+**The tier figures above are unaffected.** 738.7 MB across ten sets was
+measured from a successful build's byte log and is a dated measurement, not
+a claim about the current tree. What was wrong was the tree, for a few
+hours, and it says so in `receipt.json` the whole time — which is the
+withholding doing its job.
+
 ## Open
 
 - **The ESPC hour-rule collision, and it is the owner's.** One model

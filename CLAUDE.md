@@ -122,6 +122,17 @@ is the plural case, and it is a different reading from this one.)
   refuses to degrade a tiles call, and the orchestrator now accounts for an
   absent tier whatever the product's fate. **Rebuilding is for fresh
   products; accounting is for all of them.**
+- **This repository runs the fetcher SIX times per publish, and they have to
+  agree.** `--tile-key` once per product, then the fetch, `--tiles`,
+  `--namespace`, `--quality` — each a fresh process re-resolving the step
+  selection and re-probing HYCOM. On 2026-08-29 the new depth probe made
+  three `--tile-key` calls seconds apart return an outright failure, a
+  one-frame key and a two-frame key; every depth tile tier went 404 and was
+  withheld while the surface published. The fetcher now shares one selection
+  per publishing slot through `RUNNER_TEMP`. **Anything that makes a probe
+  costlier or stricter has to keep those six answers identical** — a tile
+  cache key that does not identify its own content is worse than no cache.
+
 - **The storage ceiling is real and it is latent.** Measured 2026-08-28: the
   tile tier is 738.7 MB and the grids 93 MB, so this repository is 832 MB of
   a 1 GB Pages cap — but a broken tile build makes it read as 93 MB, which
