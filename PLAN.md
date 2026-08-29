@@ -243,7 +243,7 @@ declared absent rather than advertised. What was wrong is that 161 good tiles
 were discarded for one transient 500, and 87 corners were never attempted.
 
 Fixed in `oceansensing.github.io`, which owns the fetchers: a tier tolerates
-`gap_budget()` refused corners (5%, shared in `espc_window.py` so the two
+`gap_budget()` refused corners (**6%** since later that day, shared in `espc_window.py` so the two
 pipelines cannot drift), publishes with `gaps` naming each one, and stops
 early only once that budget is exceeded — past it, the previous complete set
 is kept, which is the case the original all-or-nothing rule was really for.
