@@ -254,6 +254,31 @@ contract check emits a `note` rather than a failure. A tier that is *absent*
 still means absent. If you are reading a tier's byte count against the 738.7
 MB measurement, a tier with gaps is legitimately smaller and says so.
 
+## 2026-08-29: the surface's +18h tier was absent and nothing said so
+
+Reported as "how come coarse resolution current data is still served", at
+zoom 9 over the Chesapeake, minutes after the tile tiers came back.
+
+Both halves were true. `tiles/index.json` was complete and serving 0.08°
+tiles — and the map was not using it, because this repository publishes two
+frames (03:00Z and 06:00Z) and the map opens each layer on the one nearest
+the reader's clock. At 05:30Z that is the +18h frame, and `tiles-f18h` was
+404, so the layer fell back to `currents-atlantic-f18h.json` at 0.24°.
+
+**The orchestrator could not see that tier was missing.** Its owed-tier list
+filtered out every starred directory pattern, so `tiles-f*h` was excluded by
+construction from the build trigger, the produced-nothing check and the
+withheld accounting alike. This repository's `receipt.json` accordingly
+reported `"currents-surface": {}` — nothing withheld — while a tier the map
+was actively asking for did not exist. Fixed in `realtime-data-repo`
+(`expected_tiers`), which owns the orchestrator; its PLAN carries the
+mechanism.
+
+**What to read differently here.** A `receipt.json` that names no withheld
+tier now means what it always claimed to mean. Before this, it meant "no
+BASE tier is missing", which is a much weaker statement and was not the one
+written down.
+
 ## Open
 
 - **The ESPC hour-rule collision, and it is the owner's.** One model
