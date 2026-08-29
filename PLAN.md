@@ -279,6 +279,32 @@ tier now means what it always claimed to mean. Before this, it meant "no
 BASE tier is missing", which is a much weaker statement and was not the one
 written down.
 
+## 2026-08-29: this repository published tomorrow morning
+
+Reported as the currents being hours out. They were, in the other direction:
+all three products were `fresh` and every one carried
+**2026-08-30T03:00:00Z — seven hours into the reader's future** — with
+nothing near the present on the map, while HYCOM had 09:00, 12:00, 15:00 and
+18:00 that day available.
+
+From the run log at 19:50Z:
+
+```
+T+39: valid 2026-08-30T03:00:00Z from the 2026-08-28T12:00:00Z run (32 h old, +7 h from now)
+```
+
+The step picker asked "which run is newest?" before "which hour is closest?".
+The `best` aggregation stitches runs unevenly, so the newest run's coverage
+began after the reader while the run before it carried the anchor hour
+exactly. Fixed in `oceansensing.github.io` (`run_order`), which owns the
+fetcher: closeness first, recency as the tiebreak, one-run invariant intact.
+
+**What to watch for here.** `ageHours` counts distance to the nearest valid
+time in EITHER direction, so a forecast published too far ahead reads as
+stale exactly like data published too far behind — all three products showed
+`stale: true` with `ageHours 7.15` and nothing said which side of now they
+were on. If a currency alarm fires and the data looks fresh, check the sign.
+
 ## Open
 
 - **The ESPC hour-rule collision, and it is the owner's.** One model
