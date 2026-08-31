@@ -245,3 +245,47 @@ is the plural case, and it is a different reading from this one.)
   full of plausible floats, so `probe_verdict` is the part that earns the
   extra reads. Cost measured: 0.4 s for three depths, 0.2 s when it refuses,
   against ~1 s for the old single read.
+
+### Finder's `.DS_Store` is ignored here, and was tracked until 2026-08-31
+
+This repository had **no `.gitignore` at all** until then, so macOS's
+`.DS_Store` was an ordinary versioned file — six of them across the five data
+repositories, all removed from the index and ignored that day. The copy on
+disk is left alone; Finder owns it and rewrites it on the next visit.
+
+**Every one of the six arrived on a documentation commit**, and none was
+deliberate. This repository took two: `7c576f2` (2026-08-21) put one at the
+root, and the doc-doctrine sweep `fa8753d` (2026-08-30) added `.github/`'s. A
+cross-repository doc sweep is `git add -A` run in five repositories in one
+afternoon, so a file none of them ignored entered four of them on a single day
+— **the doctrine's own sweep was the vector.** The three code repositories
+were never exposed to it, having ignored `.DS_Store` since their first commit
+or the day after.
+
+What it cost is that **`git status --porcelain` stopped being an answer.**
+Finder rewrites a tracked `.DS_Store` whenever the directory is opened, so the
+tree read dirty from a window rather than from an edit — and "is this tree
+clean before I push" is only worth asking when a dirty tree means something.
+
+It is also the file class behind the engine repository's 2026-08-30 fault, one
+step earlier. There a `git rm -r` left a `.DS_Store` behind, so the emptied
+directory still existed on disk and `existsSync` path claims went on resolving
+locally while a fresh clone had nothing — green locally, red on CI, which is
+why `check:docs` asks git rather than the filesystem. **A tracked `.DS_Store`
+is the same disagreement between a clone and a working tree, in a file nobody
+chose to version.**
+
+**An ignore rule never untracks what is already in the index**, which is why
+the fix here was `git rm --cached` and not a `.gitignore` line alone. A global
+`core.excludesFile` covering the whole Finder family was written on this
+machine at 13:13 on 2026-08-31, on the owner's instruction — *always by
+default gitignore them and never track them* — and the last of the four
+additions of that day landed at 13:02: eleven minutes too late to prevent
+them, and structurally unable to reverse them.
+
+**That global file is machine-local, so the `.gitignore` here is the half a
+clone gets**, and it is not redundant with it. Blank it under `git -c
+core.excludesFile=/dev/null` and the tree goes dirty with exactly the files
+this section is about; restore it and the tree is clean. That is how the rule
+was checked rather than assumed — with the global rule left on, blanking this
+file changes nothing and the test sees nothing.
