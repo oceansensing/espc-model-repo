@@ -305,7 +305,7 @@ stale exactly like data published too far behind — all three products showed
 `stale: true` with `ageHours 7.15` and nothing said which side of now they
 were on. If a currency alarm fires and the data looks fresh, check the sign.
 
-## Proposed: split this repository in two — 2026-08-30
+## DECIDED: the fields/currents split, and this repository's legacy name — 2026-08-30
 
 The owner's proposal: rename this repository `espc-model-currents-repo`,
 create a NEW `espc-model-repo` holding SST, SSS, SSH, SIC, SIT and eventually
@@ -337,7 +337,25 @@ of this repository's bytes.** Two leads across five depths is what costs; a
 half is a real structural axis, not an arbitrary cut, and it is why the
 pattern generalizes to any model with both.
 
-### The rename is the expensive half, and it is separable
+### What the owner decided, 2026-08-30
+
+**The split goes ahead. The rename does not.**
+
+- A new **`espc-model-fields-repo`** takes SST, SSS, SSH, SIC, SIT and
+  eventually OHC — moving them out of `realtime-data-repo`.
+- **This repository keeps its name and its contents**: the currents, at every
+  depth. It is the currents repository in everything but its name.
+- **Every model added later gets the two-repo shape with both halves named**:
+  `<model>-model-currents-repo` and `<model>-model-fields-repo`. MERCATOR,
+  ECCOFS and anything after them.
+- **`espc-model-repo` is a deliberate legacy exception**, accepted as a
+  compromise rather than overlooked. Under the convention it would be
+  `espc-model-currents-repo`.
+
+**Nothing moves yet.** The decision is recorded; the migration is a separate
+sitting, and this section is what it will be executed from.
+
+### Why the rename was dropped — the expensive half, and it is separable
 
 `https://oceansensing.org/espc-model-repo/map/` is a **live origin**,
 hardcoded in the site's `src/config.ts`, answering 200 right now. Renaming
@@ -355,9 +373,15 @@ they hold rather than one by its content and the other by its absence, which
 is the better generalization: `<model>-model-currents-repo` and
 `<model>-model-fields-repo`.
 
-If the naming still matters later, the rename is an isolated change that can
-be made at any time — and it will never be cheaper than it is now, so
-"later" is a real cost too. Recorded both ways rather than decided.
+The owner took the compromise: the structure without the migration. That
+leaves one repository whose name does not match the convention it belongs to,
+which is a real cost paid knowingly — **a reader meeting
+`espc-model-currents-repo` for MERCATOR and `espc-model-repo` for ESPC will
+wonder whether they are the same kind of thing.** They are. `CLAUDE.md` says
+so at the top, which is the mitigation.
+
+The rename stays available at any time and will never be cheaper than it is
+now, so deferring it has its own price. That is understood, not overlooked.
 
 ### What the split does NOT fix, and cannot
 
