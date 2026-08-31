@@ -434,7 +434,33 @@ Moving the Navy scalars out of `realtime-data-repo` gives that repository
 model's output. That is the same argument that created this repository, and
 it applies again.
 
-## Planned: upper-ocean heat content — 2026-08-30
+## Planned: upper-ocean heat content — 2026-08-30, BUILT 2026-08-31 elsewhere
+
+**All three open questions below are answered and the layer is live**, in
+`espc-model-fields-repo` rather than here. That repository did not exist when
+this was written; the currents/fields split created it the same day, and a
+scalar field derived from temperature belongs on the scalar side. The
+recommendation this section makes — a product, not a repository — was right;
+it named the wrong repository because the right one was one decision away.
+
+| the question | the answer, 2026-08-31 |
+| --- | --- |
+| which upstream | **ESPC**, on coverage. ECCOFS stops short of the main development region, so a storm's heat potential along most of its track would be missing. |
+| a tile tier | **No.** Sea surface height's argument: what a reader zooms into is mesoscale, and the 0.16° region stride resolves warm eddies and rings. |
+| TCHP or fixed depth | **TCHP proper**, integrated to the 26 °C isotherm. |
+
+The storage question this section said to measure was measured: the whole
+fields repository is ~169.5 MB against its own gigabyte, so nothing was
+close. **And the framing that turned out to matter was not storage but the
+read** — this section is right that heat content needs a new 3-D read and
+that a "derived" framing hides it. What it did not anticipate is that the
+read is nearly free at the margin: a 0-300 m profile makes a 30 m temperature
+layer a by-product, and that layer shipped alongside.
+
+Everything below is the 2026-08-30 reasoning, unchanged, because the argument
+for *a product rather than a repository* is the reusable part.
+
+---
 
 The owner asked for an ocean heat content layer focused on the **upper**
 ocean, for **hurricane intensity forecasting**, and asked whether it wants a
@@ -506,16 +532,19 @@ argues for ESPC and a new 3-D read here; a shelf-and-Gulf-Stream layer at
 3 km argues for ECCOFS. The owner's phrase was "hurricane intensity
 forecasting", which leans global.
 
-### Open, for the owner
+### Open, for the owner — ANSWERED 2026-08-31, see the head of this section
 
-1. Which upstream — ESPC here (global, new 3-D read) or ECCOFS (regional,
-   vertical structure already planned).
-2. Whether a heat-content field needs a tile tier, which is the storage
-   question above.
-3. Whether the published quantity is TCHP proper (integrate to the 26 °C
-   isotherm) or a simpler fixed-depth heat content, which is cheaper to
-   compute and easier to explain but is not what the hurricane literature
-   means.
+1. ~~Which upstream~~ **ESPC**, on coverage.
+2. ~~Whether it needs a tile tier~~ **No.**
+3. ~~TCHP proper or a fixed depth~~ **TCHP proper.** The hurricane literature
+   means the integral to the 26 °C isotherm, and a fixed depth answers a
+   different question — 0-700 m is the climate convention and 0-100 m would
+   truncate the Loop Current exactly where it matters.
+
+The one thing none of the three anticipated: **how deep the READ has to go**,
+which is a separate decision from how deep the integral goes and was settled
+by measuring D26 rather than by argument. `espc-model-fields-repo`'s PLAN has
+the distribution.
 
 ## Open
 
