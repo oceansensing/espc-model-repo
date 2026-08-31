@@ -1,11 +1,25 @@
 # espc-model-repo
 
-The US Navy ESPC-D-V02 half of the ocean map's data, published to
+The US Navy ESPC-D-V02 **currents**, published to
 <https://oceansensing.org/espc-model-repo/>.
 
-It exists because ESPC is most of what the map publishes, and GitHub Pages
-caps a site at 1 GB. Two depth-integrated products were the change that
-would not fit.
+**The name is legacy.** Since 2026-08-30 every model splits two ways —
+`<model>-model-currents-repo` for the tiled vector fields, which are
+expensive, and `<model>-model-fields-repo` for the scalars, which are cheap.
+Under that convention this would be `espc-model-currents-repo`; the rename was
+dropped because the URL above is a live origin and **GitHub Pages does not
+redirect a renamed project site**, unlike the repository API. So read this and
+`eccofs-model-currents-repo` as the same kind of thing. `DECISIONS.md` D2
+carries the reasoning; `CLAUDE.md` says it at the top.
+
+**The ESPC scalars are not here and are not coming here.** SST, SSS, SSH,
+sea-ice concentration and thickness go to `espc-model-fields-repo`, with an
+upper-ocean heat content layer expected to join them. They are published by
+`realtime-data-repo` until that move happens.
+
+It exists because ESPC's currents are most of what the map publishes, and
+GitHub Pages caps a site at 1 GB. Two depth-integrated products were the
+change that would not fit.
 
 **Measured 2026-08-28**, from the 2026-08-27 17:21Z run's own byte log rather
 than from a projection: **93 MB of grids on the `published` branch and
@@ -18,7 +32,7 @@ the owner's call.
 
 `CLAUDE.md` is the operator's half — how to read a run, and what has already
 gone wrong. `PLAN.md` is the running record: what has been measured here, and
-what is open. Which document gets what, across all four repositories of this
+what is open. Which document gets what, across all eight repositories of this
 project, is the doctrine block at the top of `CLAUDE.md`.
 
 ## It holds no code
