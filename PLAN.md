@@ -305,6 +305,80 @@ stale exactly like data published too far behind — all three products showed
 `stale: true` with `ageHours 7.15` and nothing said which side of now they
 were on. If a currency alarm fires and the data looks fresh, check the sign.
 
+## Proposed: split this repository in two — 2026-08-30
+
+The owner's proposal: rename this repository `espc-model-currents-repo`,
+create a NEW `espc-model-repo` holding SST, SSS, SSH, SIC, SIT and eventually
+OHC, and make that dual shape the pattern for every model added later
+(MERCATOR, ECCOFS).
+
+### Storage: yes, and it is not close
+
+Computed from this repository's own recorded byte log rather than estimated:
+
+| | | |
+| --- | --- | --- |
+| today, currents only | 831.7 MB | **81.2%** |
+| today, if the Navy scalars moved in — **blocked** | 982.0 MB | 95.9% |
+| proposed: currents repo, unchanged | 831.7 MB | **81.2%** |
+| proposed: scalars repo (sst+sss+sic+sit+ssh) | 150.3 MB | **14.7%** |
+| proposed: scalars repo, with OHC at sst's size | 195.3 MB | **19.1%** |
+
+**The split does not merely fit — it unblocks something currently blocked.**
+Moving the Navy scalars into this repository as it stands lands at 96% with
+about 42 MB spare, less than one current frame, which is why they have stayed
+in `realtime-data-repo`. Split, they sit at 19% with **828 MB of headroom**,
+and the two-lead question this file has been holding open as the headroom
+lever stops being forced.
+
+The asymmetry is the whole reason it works: **the currents' tile tier is 89%
+of this repository's bytes.** Two leads across five depths is what costs; a
+2-D scalar field is 44–58 MB. Separating the expensive half from the cheap
+half is a real structural axis, not an arbitrary cut, and it is why the
+pattern generalizes to any model with both.
+
+### The rename is the expensive half, and it is separable
+
+`https://oceansensing.org/espc-model-repo/map/` is a **live origin**,
+hardcoded in the site's `src/config.ts`, answering 200 right now. Renaming
+the repository changes that path, and **GitHub Pages project sites do not
+reliably redirect after a rename** — old URLs 404. A reader holding a stale
+bundle fetches the old paths and gets nothing until they reload.
+
+That is survivable with a coordinated deploy, and it buys only a name.
+
+**The cheaper route to the identical structure**: leave this repository as
+the currents repository under its current name, and add
+`espc-model-fields-repo` for the scalars. Same split, same storage answer,
+**no URL migration and no 404 window**. It also names both halves by what
+they hold rather than one by its content and the other by its absence, which
+is the better generalization: `<model>-model-currents-repo` and
+`<model>-model-fields-repo`.
+
+If the naming still matters later, the rename is an isolated change that can
+be made at any time — and it will never be cheaper than it is now, so
+"later" is a real cost too. Recorded both ways rather than decided.
+
+### What the split does NOT fix, and cannot
+
+**The ESPC hour rule spans ten roots and would still span two repositories.**
+The contract requires one model run to publish one hour across all ten
+members; those ten come from two repositories, on two crons, behind two
+independent publish gates, and neither can see the other's hour at publish
+time. Only the site, reading both origins, can.
+
+The one arrangement that would fix it — all ten in one repository — is
+**exactly what storage forbids**, at 96% of the cap. So cross-origin
+enforcement of that rule is permanent, not a stage on the way to something
+tidier. Worth knowing before the split is read as a simplification.
+
+### A gain the proposal does not claim for itself
+
+Moving the Navy scalars out of `realtime-data-repo` gives that repository
+**one subject rather than two**: observations, and not observations plus one
+model's output. That is the same argument that created this repository, and
+it applies again.
+
 ## Planned: upper-ocean heat content — 2026-08-30
 
 The owner asked for an ocean heat content layer focused on the **upper**
