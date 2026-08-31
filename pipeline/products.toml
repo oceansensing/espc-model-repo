@@ -1,10 +1,12 @@
 # What this repository publishes: the ESPC currents, and nothing else.
 #
-# **The Navy temperature and salinity stay in `realtime-data-repo`**, the
-# owner's call on 2026-08-22, after the storage was measured rather than
-# estimated. The projection then: ~88 MB per tiled u/v frame, 528 MB for the
-# three depth-averaged layers, ~969 MB with sst and sss against a 1 GB Pages
-# limit, ~880 MB without them.
+# **The Navy scalar fields are `espc-model-fields-repo`'s, since 2026-08-31.**
+# They stayed in `realtime-data-repo` from 2026-08-22 on the owner's call,
+# after the storage was measured rather than estimated — the projection then:
+# ~88 MB per tiled u/v frame, 528 MB for the three depth-averaged layers,
+# ~969 MB with sst and sss against a 1 GB Pages limit, ~880 MB without them.
+# They could never come here; the currents-and-fields split gave them a
+# repository of their own instead, and this one keeps the currents alone.
 #
 # **Re-measured 2026-08-28 from the pipeline's own byte log, and the call
 # stands.** A frame is 71-78 MB rather than 88, the caps are 433.6 MB rather
@@ -23,10 +25,15 @@
 # It also gives this repository one subject rather than two: the currents at
 # every depth the model offers, from one model, in one place.
 #
-# The ESPC products move here from `realtime-data-repo` as part of the split
-# — the currents at the surface and 50 m, and the Navy temperature and
-# salinity — while the **ice stays behind**, deliberately, as a live test that
-# moving one product between repositories is cheap.
+# The ESPC currents moved here from `realtime-data-repo` on 2026-08-22 — the
+# surface and 50 m and, later, the three depth-averaged caps. **The Navy
+# temperature and salinity did NOT come with them**, on storage, and the ice
+# stayed behind deliberately as a live test that moving one product between
+# repositories is cheap.
+#
+# **That test was cashed on 2026-08-31**: all five scalars went to
+# `espc-model-fields-repo`, and the consumer's side of it was one line in the
+# site's `MAP_ORIGINS`.
 #
 # Two rules this file has to satisfy, both learned in the other repository:
 #

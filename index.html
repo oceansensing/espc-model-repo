@@ -22,13 +22,17 @@
 </head>
 <body>
 <h1>espc-model-repo</h1>
-<p>One model, published on its own: the US Navy ESPC-D-V02 surface and 50 m
-currents, and its sea surface temperature and salinity, for the
+<p>One half of one model: the US Navy ESPC-D-V02 currents, at the surface,
+at 50 m, and depth-averaged to three caps, for the
 <a href="https://oceansensing.org/visualization/">C4PO ocean map</a>. The
-Navy sea ice comes off the same model and is published by
-<a href="https://oceansensing.org/realtime-data-repo/">realtime-data-repo</a>
-instead — deliberately, so that moving one product between repositories stays
-a thing this arrangement can do rather than a thing it once did.</p>
+scalar fields off the same run — temperature, salinity, height and sea ice —
+are published by
+<a href="https://oceansensing.org/espc-model-fields-repo/">espc-model-fields-repo</a>,
+split from these because the vector tiles are what cost bytes.</p>
+<p>The name is a legacy one. Under the convention every model follows now
+this would be <code>espc-model-currents-repo</code>; it was not renamed
+because this URL is a live origin, and GitHub Pages does not reliably
+redirect a renamed project site.</p>
 <p>It is not a public API. The files under <code>map/</code> exist to be read
 by the map, and their layout is that map's contract.</p>
 <p>What is fresh, what is held, and which roots this origin serves:
