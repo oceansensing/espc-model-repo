@@ -5,8 +5,11 @@ reasoning lives in `PLAN.md`; this file is the index of what was decided and
 when, so a future reader never re-derives whether a door was walked through.
 
 **Started 2026-08-30**, later than this repository itself — the doctrine says
-every repository carries one and three did not. Entries before that date are
-reconstructed from `PLAN.md` and the site's, and are marked as such.
+every repository carries one and, at that moment, three did not. **The last
+two arrived on 2026-08-31**: the site's and `realtime-data-repo`'s, and the
+site's `check:docs` has required one in every repository since. Entries before
+2026-08-30 are reconstructed from `PLAN.md` and the site's, and are marked as
+such.
 
 **What counts as one-way in a data repository**: a decision that puts bytes in
 readers' hands under a shape they will code against; a decision about which
