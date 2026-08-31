@@ -114,11 +114,13 @@ is a running mean of SPEED folded beside the vector one, and a median
 speed-ratio band backstops the scale error that correlation structurally
 cannot see.
 
-**Known open decision** (recorded in this repository's `PLAN.md`): a held
-domain at an older hour of the same model run fails the site contract's
-ESPC hour rule, which sets deploy=False and freezes the whole Pages
-tree until the domain heals or the run changes. Whether a held product
-should read as a note rather than a fault is the owner's call.
+**Settled, and it used to be an open decision.** A held domain at an older
+hour of the same model run fails the site contract's ESPC hour rule — and that
+failure is **withdrawable**, not fatal: the publish gate runs the contract
+with `--quarantine`, so the layer is withheld and its previous copy ships
+while the rest of the tree publishes. It froze the whole Pages tree when this
+was written, which is what made it an open question; blocking a publish over
+one layer's hour is what cost sixteen hours in August.
 
 ## The published contract
 

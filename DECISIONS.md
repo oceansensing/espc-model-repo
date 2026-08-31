@@ -70,9 +70,10 @@ inherits the two-repo shape, and each new pair makes the exception here
 slightly more surprising. The mitigation is that `CLAUDE.md` says at the top
 what this repository actually holds.
 
-**What this decision does NOT change**: the ESPC hour rule still spans ten
-roots in two repositories, and the only arrangement that would fix it — all
-ten in one repository — is exactly what storage forbids. Cross-origin
+**What this decision does NOT change**: the ESPC hour rule still spans every
+root of the model across two repositories — **twelve since 2026-08-31**, five
+here and seven in the fields half — and the only arrangement that would fix it
+is exactly what storage forbids. Cross-origin
 enforcement of that rule is permanent, not a stage toward something tidier.
 
 **Executed 2026-08-31.** `espc-model-fields-repo` published the five scalars
