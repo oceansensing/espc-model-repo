@@ -75,5 +75,21 @@ roots in two repositories, and the only arrangement that would fix it — all
 ten in one repository — is exactly what storage forbids. Cross-origin
 enforcement of that rule is permanent, not a stage toward something tidier.
 
-**Nothing has moved.** The decision is recorded; the migration is a separate
-sitting.
+**Executed 2026-08-31.** `espc-model-fields-repo` published the five scalars
+at 06:26Z — three products, four tile tiers, ≈169.5 MB against a 1 GB cap —
+and `realtime-data-repo` stopped declaring them the same hour. This
+repository is unchanged: it held the currents before and holds them now, and
+the split cost it nothing but a corrected `products.toml` header that had
+gone on saying the Navy fields were staying where they no longer are.
+
+**The consumer's side was one line** in the site's `MAP_ORIGINS`, which is
+what the ice staying behind on 2026-08-22 was set up to test.
+
+**One thing the decision's design did not anticipate**, found by the new
+repository's first run: a fetch script's families can split across
+repositories while its *invocation* does not. A step must be scoped with
+`--only` to what its products own, or it writes files nobody declares and the
+write fence refuses the run. Gated in the site's `check:docs` the same day.
+It changes nothing here — this repository owns every family
+`fetch-currents.py` writes, which is why its own step needs no `--only` — but
+the next model to split will meet it.

@@ -17,6 +17,37 @@ clean surface publishes while a faulty depth holds. Crons at `7,27,47` past
 the hour plus `:12` on the 3-hour anchor boundaries, offset from the sibling
 so two repositories never read HYCOM in the same minute.
 
+## 2026-08-31: the split is executed, and this repository did not move
+
+`espc-model-fields-repo` published the ESPC scalars for the first time at
+06:26Z — `sst-navy`, `sss-navy`, `sic-navy`, `sit-navy`, `ssh-navy`, all
+fresh, four tile tiers, ≈169.5 MB, **16.6%** of its 1 GB cap. This repository
+is untouched: it held the currents before and holds them now.
+
+**What it owed was two stale claims about products it never had.**
+`pipeline/products.toml`'s header said the Navy temperature and salinity
+*stay in `realtime-data-repo`* — true from 2026-08-22, false from today — and
+`index.html`, the page this origin actually serves at its root, said this
+repository publishes "its sea surface temperature and salinity". **That one
+had been false since 2026-08-22**, nine days, on a public page, and was found
+by reading the file rather than by any gate. Both corrected.
+
+**The three-way hour agreement.** Ten ESPC roots now sit in two repositories —
+five here, five there — and the map holds them to one anchor across origins.
+It works because the anchor is a pure function of time: the origins agree
+*without coordinating*. Observed at 06:49Z, the two credit lines carried
+different runs (this repository on 2026-08-30 12Z, the scalars on 2026-08-29
+12Z) at the same valid hour, which is the documented note rather than a
+fault — and it predates the move, since `realtime-data-repo` was publishing
+the same 08-29 run before it.
+
+**What the migration found that touches this repository not at all, but will
+touch the next one:** a step's scope does not follow its products'. A fetch
+script's families can split across repositories while its invocation does
+not, and the write fence is what notices, at the cost of a failed run. This
+repository owns every family `fetch-currents.py` writes, so its step needs no
+`--only` — and that is exactly why the trap is easy to miss here.
+
 ## Storage, measured 2026-08-28
 
 The figure that decides whether the Navy products can move here, taken from
