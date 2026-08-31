@@ -305,6 +305,89 @@ stale exactly like data published too far behind — all three products showed
 `stale: true` with `ageHours 7.15` and nothing said which side of now they
 were on. If a currency alarm fires and the data looks fresh, check the sign.
 
+## Planned: upper-ocean heat content — 2026-08-30
+
+The owner asked for an ocean heat content layer focused on the **upper**
+ocean, for **hurricane intensity forecasting**, and asked whether it wants a
+new repository — `espc-model-derived-repo` was the proposed name.
+
+**The recommendation is no: a fourth product HERE, not a sixth repository.**
+The reasoning, and the one measurement that could overturn it:
+
+**The split's own argument does not apply.** This repository exists because
+one upstream is one fault domain — a HYCOM outage must not hold back the
+site's other products. Heat content's upstream is **the same ESPC model**.
+It fails when the currents fail, so separating them buys no isolation; it
+would only move the same failure to a different Pages site.
+
+**Per-product fault domains already exist inside this repository.** That is
+what `currents-surface`, `currents-50m` and `currents-caps` are: three
+products from one model, so a clean surface publishes while a faulty depth
+holds. A fourth product gets the same containment on the same machinery,
+with no new repository, no new cron, and no new doctrine surface.
+
+**A name that groups by HOW a number was made is the wrong cut.**
+"derived" describes provenance, not what fails together — which is the
+opposite of the principle that produced this repository. By that logic the
+depth-averaged caps, which are also derived, would belong there too.
+
+**The one thing that could overturn it is storage, and it is unmeasured.**
+This repository stood at 832 MB, 81% of the 1 GB Pages cap, on 2026-08-28.
+Whether a heat-content field fits depends on whether it needs a tile tier;
+the surface Navy products were 44.0 and 45.1 MB each, and a 2-D field of the
+same shape would sit near that. **Measure before deciding.** The headroom
+lever is already recorded above: one lead per depth halves the tile tier.
+
+### What it actually costs, which is not what it looks like
+
+**This repository fetches no temperature at any depth.** It reads currents —
+surface, 50 m, and the three depth-averaged caps — and nothing else. The
+Navy `sst` is surface-only and lives in `realtime-data-repo`. So heat content
+is **not** a derivation from files already held; it needs a **new upstream
+read of the 3-D temperature field**, which is the expensive part and the part
+a "derived" framing hides.
+
+Upper-ocean heat content in the hurricane sense is Tropical Cyclone Heat
+Potential: the heat integrated between the surface and the 26 °C isotherm.
+That needs temperature on enough vertical levels to find that isotherm and
+integrate to it — not one level, and not an average.
+
+### A question the ECCOFS work reopens
+
+`eccofs-model-repo` carries `temp` on **50 vertical levels at 3 km**, which is
+exactly the field this product needs, and the site's PLAN already measured
+that source in detail (2026-08-05, "Queued: ECCOFS"). So there are two
+candidate upstreams and they are not interchangeable:
+
+| | ESPC (here) | ECCOFS |
+| --- | --- | --- |
+| coverage | global | Grand Banks to the Orinoco |
+| vertical | needs a new 3-D read | `temp`, 50 levels, already the plan |
+| horizontal | the model's own | 3 km |
+| grid | regular lat/lon | **curvilinear, terrain-following, staggered** |
+
+**Coverage is the deciding axis for hurricanes.** ECCOFS stops well short of
+the main development region off West Africa, so a storm's heat potential
+along most of its track would be missing. ESPC is global and does not have
+that problem. Against that, ECCOFS already intends to carry the vertical
+structure, and its grid work is the largest data task yet queued.
+
+**Recorded as a genuine fork, not a settled question.** A basin-wide layer
+argues for ESPC and a new 3-D read here; a shelf-and-Gulf-Stream layer at
+3 km argues for ECCOFS. The owner's phrase was "hurricane intensity
+forecasting", which leans global.
+
+### Open, for the owner
+
+1. Which upstream — ESPC here (global, new 3-D read) or ECCOFS (regional,
+   vertical structure already planned).
+2. Whether a heat-content field needs a tile tier, which is the storage
+   question above.
+3. Whether the published quantity is TCHP proper (integrate to the 26 °C
+   isotherm) or a simpler fixed-depth heat content, which is cheaper to
+   compute and easier to explain but is not what the hurricane literature
+   means.
+
 ## Open
 
 - **The ESPC hour-rule collision, and it is the owner's.** One model
