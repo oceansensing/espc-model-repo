@@ -33,7 +33,7 @@ the owner's call.
 `CLAUDE.md` is the operator's half — how to read a run, and what has already
 gone wrong. `PLAN.md` is the running record: what has been measured here, and
 what is open. `DECISIONS.md` indexes the dated one-way decisions. Which
-document gets what, across all eight repositories of this project, is the
+document gets what, across all ten repositories of this project, is the
 doctrine block at the top of `CLAUDE.md`.
 
 ## It holds no code
