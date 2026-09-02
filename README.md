@@ -13,9 +13,9 @@ redirect a renamed project site**, unlike the repository API. So read this and
 carries the reasoning; `CLAUDE.md` says it at the top.
 
 **The ESPC scalars are not here and are not coming here.** SST, SSS, SSH,
-sea-ice concentration and thickness go to `espc-model-fields-repo`, with an
-upper-ocean heat content layer expected to join them. They are published by
-`realtime-data-repo` until that move happens.
+sea-ice concentration and thickness are published by `espc-model-fields-repo`
+since 2026-08-31, together with the 30 m temperature and the ocean heat
+content layer that landed there the same day.
 
 It exists because ESPC's currents are most of what the map publishes, and
 GitHub Pages caps a site at 1 GB. Two depth-integrated products were the

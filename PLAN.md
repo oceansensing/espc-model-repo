@@ -32,8 +32,9 @@ repository publishes "its sea surface temperature and salinity". **That one
 had been false since 2026-08-22**, nine days, on a public page, and was found
 by reading the file rather than by any gate. Both corrected.
 
-**The three-way hour agreement.** Ten ESPC roots now sit in two repositories —
-five here, five there — and the map holds them to one anchor across origins.
+**The three-way hour agreement.** Twelve ESPC roots now sit in two repositories —
+five here, seven there since the 30 m temperature and heat content landed the
+same day — and the map holds them to one anchor across origins.
 It works because the anchor is a pure function of time: the origins agree
 *without coordinating*. Observed at 06:49Z, the two credit lines carried
 different runs (this repository on 2026-08-30 12Z, the scalars on 2026-08-29
@@ -407,7 +408,7 @@ is the better generalization: `<model>-model-currents-repo` and
 The owner took the compromise: the structure without the migration. That
 leaves one repository whose name does not match the convention it belongs to,
 which is a real cost paid knowingly — **a reader meeting
-`espc-model-currents-repo` for MERCATOR and `espc-model-repo` for ESPC will
+`mercator-model-currents-repo` for Mercator and `espc-model-repo` for ESPC will
 wonder whether they are the same kind of thing.** They are. `CLAUDE.md` says
 so at the top, which is the mitigation.
 
@@ -416,13 +417,13 @@ now, so deferring it has its own price. That is understood, not overlooked.
 
 ### What the split does NOT fix, and cannot
 
-**The ESPC hour rule spans ten roots and would still span two repositories.**
-The contract requires one model run to publish one hour across all ten
-members; those ten come from two repositories, on two crons, behind two
+**The ESPC hour rule spans twelve roots and would still span two repositories.**
+The contract requires one model run to publish one hour across all twelve
+members; those twelve come from two repositories, on two crons, behind two
 independent publish gates, and neither can see the other's hour at publish
 time. Only the site, reading both origins, can.
 
-The one arrangement that would fix it — all ten in one repository — is
+The one arrangement that would fix it — all twelve in one repository — is
 **exactly what storage forbids**, at 96% of the cap. So cross-origin
 enforcement of that rule is permanent, not a stage on the way to something
 tidier. Worth knowing before the split is read as a simplification.
@@ -580,3 +581,19 @@ the distribution.
   rebuild two tiers while a third produces nothing. Whether that wants a
   longer per-try timeout or a fetch that tolerates one dead product is not
   yet decided.
+
+## 2026-09-01: an evening hold that was HYCOM's, not ours
+
+At 20:52Z all three products held with `step currents exit 1`: four
+consecutive reads from `tds.hycom.org` came back as truncated chunked
+responses (`ValueError: invalid literal for int() with base 16: b''` from
+`http.client`), the retry ladder in `component()` caught each, retried, and
+gave up after its last try -- which is the correct outcome, and the reason
+the ladder catches `ValueError` at all (added that morning). Nothing was
+published, nothing wrong reached the map, and the currents carried forward
+with their age rising; the orchestrator's currency line reported them 2.9 h
+behind a 2 h budget as `held`, upstream's fault, not `behind`. Recorded
+because the "Where it stands" above would otherwise read as if the last thing
+that happened here was the split, and because it is the same stall pattern
+that motivated the Mercator peer, which drew through it.
+

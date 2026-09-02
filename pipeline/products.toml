@@ -41,7 +41,7 @@
 #   --roots` publishes.** The orchestrator exits 2 on a root declared here
 #   that the contract does not know, and stops the publish. It does *not*
 #   fail on the reverse — a contract root this repository has no product for
-#   is the ordinary case now, because `realtime-data-repo` owns most of them.
+#   is the ordinary case now, because five other origins own them between them.
 #   The union across origins is held by `check:docs` on the site, which is
 #   the only side that can see every declaration at once.
 # - **A product that leaves takes its files with it.** The stage is seeded

@@ -25,9 +25,9 @@ the migration.
 
 So: **a reader meeting `mercator-model-currents-repo` and `espc-model-repo`
 should read them as the same kind of thing.** They are. And the ESPC scalars
-— SST, SSS, SSH, SIC, SIT, and eventually OHC — belong in
-`espc-model-fields-repo`, **not here**, however much the name suggests
-otherwise. They are still in `realtime-data-repo` until that move happens.
+— SST, SSS, SSH, SIC, SIT, the 30 m temperature and OHC — live in
+`espc-model-fields-repo` since 2026-08-31, **not here**, however much the
+name suggests otherwise.
 
 <!-- DOC-DOCTRINE v1 begin — identical in all ten repositories; `check:docs` holds them equal. Edit one, sync all. -->
 ## Where truth lives, and what "update docs" means
