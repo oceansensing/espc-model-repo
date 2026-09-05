@@ -1,0 +1,155 @@
+{
+ "schema": 1,
+ "product": "currents-caps",
+ "title": "Currents averaged to 200, 350 and 1000 m (ESPC)",
+ "fate": "fresh",
+ "reason": null,
+ "checked": "2026-09-05T19:50:46Z",
+ "updated": "2026-09-05T18:44:59Z",
+ "hour": "2026-09-05T18:00:00Z",
+ "modelRun": "2026-09-03T12:00:00Z",
+ "source": "US Navy ESPC-D-V02",
+ "hours": [
+  "2026-09-05T18:00:00Z",
+  "2026-09-05T21:00:00Z"
+ ],
+ "files": {
+  "currents-antarctic-avg1000m-f57h.json": {
+   "bytes": 1434337
+  },
+  "currents-antarctic-avg1000m-vbar1d.json": {
+   "bytes": 3317389
+  },
+  "currents-antarctic-avg1000m.json": {
+   "bytes": 1435256
+  },
+  "currents-antarctic-avg200m-f57h.json": {
+   "bytes": 1463545
+  },
+  "currents-antarctic-avg200m-vbar1d.json": {
+   "bytes": 3349123
+  },
+  "currents-antarctic-avg200m.json": {
+   "bytes": 1461356
+  },
+  "currents-antarctic-avg350m-f57h.json": {
+   "bytes": 1451392
+  },
+  "currents-antarctic-avg350m-vbar1d.json": {
+   "bytes": 3337372
+  },
+  "currents-antarctic-avg350m.json": {
+   "bytes": 1449627
+  },
+  "currents-arctic-avg1000m-f57h.json": {
+   "bytes": 2001583
+  },
+  "currents-arctic-avg1000m-vbar1d.json": {
+   "bytes": 4163741
+  },
+  "currents-arctic-avg1000m.json": {
+   "bytes": 1991435
+  },
+  "currents-arctic-avg200m-f57h.json": {
+   "bytes": 2032885
+  },
+  "currents-arctic-avg200m-vbar1d.json": {
+   "bytes": 4211983
+  },
+  "currents-arctic-avg200m.json": {
+   "bytes": 2025753
+  },
+  "currents-arctic-avg350m-f57h.json": {
+   "bytes": 2020909
+  },
+  "currents-arctic-avg350m-vbar1d.json": {
+   "bytes": 4193093
+  },
+  "currents-arctic-avg350m.json": {
+   "bytes": 2013526
+  },
+  "currents-atlantic-avg1000m-f57h.json": {
+   "bytes": 638621
+  },
+  "currents-atlantic-avg1000m-vbar1d.json": {
+   "bytes": 1447782
+  },
+  "currents-atlantic-avg1000m.json": {
+   "bytes": 638612
+  },
+  "currents-atlantic-avg200m-f57h.json": {
+   "bytes": 661947
+  },
+  "currents-atlantic-avg200m-vbar1d.json": {
+   "bytes": 1482662
+  },
+  "currents-atlantic-avg200m.json": {
+   "bytes": 662032
+  },
+  "currents-atlantic-avg350m-f57h.json": {
+   "bytes": 656959
+  },
+  "currents-atlantic-avg350m-vbar1d.json": {
+   "bytes": 1475926
+  },
+  "currents-atlantic-avg350m.json": {
+   "bytes": 657286
+  },
+  "currents-avg1000m-f57h.json": {
+   "bytes": 531982
+  },
+  "currents-avg1000m-vbar1d.json": {
+   "bytes": 1171326
+  },
+  "currents-avg1000m.json": {
+   "bytes": 531609,
+   "sha256": "a355f4abff009b77ddaed80922360c16c7b1e4db475b990e63f9b31fd593c738"
+  },
+  "currents-avg200m-f57h.json": {
+   "bytes": 551133
+  },
+  "currents-avg200m-vbar1d.json": {
+   "bytes": 1199749
+  },
+  "currents-avg200m.json": {
+   "bytes": 550711,
+   "sha256": "220a25e7462bcca0e0acaad5a6b44ca59c11a76bed7dc93087c152c0868df343"
+  },
+  "currents-avg350m-f57h.json": {
+   "bytes": 545482
+  },
+  "currents-avg350m-vbar1d.json": {
+   "bytes": 1191879
+  },
+  "currents-avg350m.json": {
+   "bytes": 545063,
+   "sha256": "11482a4d77af410247e8402cbdc6c3454d7a061ea5402167224129dfe6fcc2da"
+  }
+ },
+ "tiles": {
+  "tiles-avg1000m": {
+   "state": "kept",
+   "reason": null
+  },
+  "tiles-avg1000m-f57h": {
+   "state": "kept",
+   "reason": null
+  },
+  "tiles-avg200m": {
+   "state": "kept",
+   "reason": null
+  },
+  "tiles-avg200m-f57h": {
+   "state": "kept",
+   "reason": null
+  },
+  "tiles-avg350m": {
+   "state": "kept",
+   "reason": null
+  },
+  "tiles-avg350m-f57h": {
+   "state": "kept",
+   "reason": null
+  }
+ }
+}
