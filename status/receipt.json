@@ -1,0 +1,24 @@
+{
+ "schema": 1,
+ "generated": "2026-09-15T21:58:54Z",
+ "mode": "full",
+ "fates": {
+  "currents-surface": "fresh",
+  "currents-50m": "fresh",
+  "currents-caps": "fresh"
+ },
+ "reasons": {},
+ "built": {
+  "currents-tiles-surface": true,
+  "currents-tiles-50m": true,
+  "currents-tiles-caps": true
+ },
+ "withheld": {
+  "currents-surface": {},
+  "currents-50m": {},
+  "currents-caps": {}
+ },
+ "deploy": true,
+ "notes": [],
+ "behind": []
+}
