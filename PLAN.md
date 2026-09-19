@@ -597,3 +597,21 @@ because the "Where it stands" above would otherwise read as if the last thing
 that happened here was the split, and because it is the same stall pattern
 that motivated the Mercator peer, which drew through it.
 
+## 2026-09-19: the no-op run is about two minutes now, not 1 min 22 s
+
+The publish workflow's header has said since 2026-08-27 that "a no-op run is
+1 min 22 s end to end". Re-read from the run list for 2026-09-18, on the
+owner's question about where the org's Actions minutes go: 68 successful
+runs, 50 of them no-ops, 96 to 271 s with a median of 122 s. The fetch step
+itself is 11 s of that (run 34550813842, 2026-09-11); the rest is four
+checkouts, two tool set-ups, three cache restores, the orchestrator's own
+unit suite, and 22 s uploading the Pages artifact — which a no-op run does,
+because the status file it publishes carries the time of the check. Both
+jobs round up, so a no-op bills three minutes, and about 73 runs a day (80
+are scheduled; GitHub drops some) put this repository at 340–610 billed
+minutes a day from 09-05 through 09-18 — 758 to 986 in the first three days
+of the month — and first on the org's usage chart. **All of it is discounted to nothing: the repository is
+public.** The header's argument stands — it is not a cost question — and
+its number now carries both readings and their dates. Noted and not taken:
+skipping the Pages upload when nothing but the check time moved would bring
+the build job back under a minute.

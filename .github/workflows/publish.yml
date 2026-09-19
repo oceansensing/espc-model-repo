@@ -45,8 +45,12 @@ on:
   # **It is not a cost question** — this repository is public, so Actions
   # minutes are free — and it is deliberately not a load question either. The
   # probe-first exit means a run with nothing new to fetch reads a handful of
-  # OPeNDAP metadata requests and stops: measured, a no-op run is 1 min 22 s
-  # end to end. Upstream is the thing to protect, not the runner: HYCOM is
+  # OPeNDAP metadata requests and stops: measured 2026-08-27, a no-op run was
+  # 1 min 22 s end to end; re-read 2026-09-18 it is about two minutes (50
+  # no-ops that day, 96-271 s, median 122 s) -- the fetch step is 11 s of it,
+  # the rest checkouts, cache restores, the unit suite and the Pages upload.
+  # PLAN has the reading.
+  # Upstream is the thing to protect, not the runner: HYCOM is
   # already answering some requests with timeouts, so the cadence is three an
   # hour rather than six, and the real fetch still happens only when the
   # anchor rolls over.
