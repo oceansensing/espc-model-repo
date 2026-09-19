@@ -1,0 +1,76 @@
+{
+ "schema": 2,
+ "generated": "2026-09-19T20:50:55Z",
+ "mode": "full",
+ "run": {
+  "id": "35468605604",
+  "url": "https://github.com/oceansensing/espc-model-repo/actions/runs/35468605604"
+ },
+ "products": {
+  "currents-surface": {
+   "title": "Currents at the surface (ESPC)",
+   "roots": [
+    "currents.json"
+   ],
+   "fate": "fresh",
+   "reason": null,
+   "checked": "2026-09-19T20:50:55Z",
+   "updated": "2026-09-19T18:42:53Z",
+   "hour": "2026-09-19T18:00:00Z",
+   "modelRun": "2026-09-18T12:00:00Z",
+   "source": "US Navy ESPC-D-V02",
+   "hours": [
+    "2026-09-19T18:00:00Z",
+    "2026-09-19T21:00:00Z"
+   ],
+   "stale": false,
+   "staleCause": null,
+   "ageHours": 0.15,
+   "nearestOffsetHours": -0.15
+  },
+  "currents-50m": {
+   "title": "Currents at 50 m (ESPC)",
+   "roots": [
+    "currents-50m.json"
+   ],
+   "fate": "fresh",
+   "reason": null,
+   "checked": "2026-09-19T20:50:55Z",
+   "updated": "2026-09-19T18:42:53Z",
+   "hour": "2026-09-19T18:00:00Z",
+   "modelRun": "2026-09-18T12:00:00Z",
+   "source": "US Navy ESPC-D-V02",
+   "hours": [
+    "2026-09-19T18:00:00Z",
+    "2026-09-19T21:00:00Z"
+   ],
+   "stale": false,
+   "staleCause": null,
+   "ageHours": 0.15,
+   "nearestOffsetHours": -0.15
+  },
+  "currents-caps": {
+   "title": "Currents averaged to 200, 350 and 1000 m (ESPC)",
+   "roots": [
+    "currents-avg200m.json",
+    "currents-avg350m.json",
+    "currents-avg1000m.json"
+   ],
+   "fate": "fresh",
+   "reason": null,
+   "checked": "2026-09-19T20:50:55Z",
+   "updated": "2026-09-19T18:42:53Z",
+   "hour": "2026-09-19T18:00:00Z",
+   "modelRun": "2026-09-18T12:00:00Z",
+   "source": "US Navy ESPC-D-V02",
+   "hours": [
+    "2026-09-19T18:00:00Z",
+    "2026-09-19T21:00:00Z"
+   ],
+   "stale": false,
+   "staleCause": null,
+   "ageHours": 0.15,
+   "nearestOffsetHours": -0.15
+  }
+ }
+}

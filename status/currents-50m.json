@@ -1,0 +1,65 @@
+{
+ "schema": 1,
+ "product": "currents-50m",
+ "title": "Currents at 50 m (ESPC)",
+ "fate": "fresh",
+ "reason": null,
+ "checked": "2026-09-19T20:50:55Z",
+ "updated": "2026-09-19T18:42:53Z",
+ "hour": "2026-09-19T18:00:00Z",
+ "modelRun": "2026-09-18T12:00:00Z",
+ "source": "US Navy ESPC-D-V02",
+ "hours": [
+  "2026-09-19T18:00:00Z",
+  "2026-09-19T21:00:00Z"
+ ],
+ "files": {
+  "currents-50m-f33h.json": {
+   "bytes": 563168
+  },
+  "currents-50m-vbar1d.json": {
+   "bytes": 1202063
+  },
+  "currents-50m.json": {
+   "bytes": 562865,
+   "sha256": "5e27e1a2bd9a04fc296418b77852b6a009fc5c5e073484f62f649a53d777b658"
+  },
+  "currents-antarctic-50m-f33h.json": {
+   "bytes": 1490054
+  },
+  "currents-antarctic-50m-vbar1d.json": {
+   "bytes": 3358310
+  },
+  "currents-antarctic-50m.json": {
+   "bytes": 1487639
+  },
+  "currents-arctic-50m-f33h.json": {
+   "bytes": 2098885
+  },
+  "currents-arctic-50m-vbar1d.json": {
+   "bytes": 4186270
+  },
+  "currents-arctic-50m.json": {
+   "bytes": 2095354
+  },
+  "currents-atlantic-50m-f33h.json": {
+   "bytes": 674030
+  },
+  "currents-atlantic-50m-vbar1d.json": {
+   "bytes": 1479833
+  },
+  "currents-atlantic-50m.json": {
+   "bytes": 674060
+  }
+ },
+ "tiles": {
+  "tiles-50m": {
+   "state": "kept",
+   "reason": null
+  },
+  "tiles-50m-f33h": {
+   "state": "kept",
+   "reason": null
+  }
+ }
+}
