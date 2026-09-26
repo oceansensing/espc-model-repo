@@ -143,6 +143,6 @@ a push rather than after one.
 `roots` this origin serves, its `source`, its `hour`, the `hours` it offers
 and its `modelRun`. The map knows *origins*; origins know *products*.
 
-The same tree also goes to Cloudflare R2 (`oceannow-data/espc-model-repo/`),
-which the Ocean Now app reads; the site's `pipeline/publish_r2.py` has the
+The same tree also goes to a second host, Cloudflare R2, under this
+repository's name; the site's `pipeline/publish_r2.py` has the
 rules.
