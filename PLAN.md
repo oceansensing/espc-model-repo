@@ -10,12 +10,14 @@ the currency work are all there and are not copied here.
 ## Where it stands
 
 Live at <https://oceansensing.org/espc-model-repo/> since 2026-08-22, holding
-no code: the fetchers come from `oceansensing.github.io`, the orchestrator
-from `realtime-data-repo`, both checked out at run time. Three products, one
-per upstream read — `currents-surface`, `currents-50m`, `currents-caps` — so a
-clean surface publishes while a faulty depth holds. Crons at `7,27,47` past
-the hour plus `:12` on the 3-hour anchor boundaries, offset from the sibling
-so two repositories never read HYCOM in the same minute.
+no code: the fetchers and the orchestrator both come from
+`oceansensing.github.io` (the orchestrator in its private `pipeline/` since
+2026-09-26, from `realtime-data-repo` before), checked out at run time.
+Three products, one per upstream read — `currents-surface`, `currents-50m`,
+`currents-caps` — so a clean surface publishes while a faulty depth holds.
+Crons at `7,27,47` past the hour plus `:12` on the 3-hour anchor boundaries,
+offset from the sibling so two repositories never read HYCOM in the same
+minute.
 
 ## 2026-08-31: the split is executed, and this repository did not move
 
@@ -575,8 +577,8 @@ the distribution.
   hours after its nominal time, so the original wording here ("skipped") was
   wrong and is corrected. Upstream, not ours, and the map's credit line said
   so. A `runAgeHours` signal was
-  proposed and the owner deferred it; it is written up in
-  `realtime-data-repo`'s PLAN, which owns `status/status.json`.
+  proposed and the owner deferred it; it is written up in the site's
+  `pipeline/PLAN.md` — the pipeline is what owns `status/status.json`.
 - **HYCOM's `.das` is intermittently slow rather than down**, and one run can
   rebuild two tiers while a third produces nothing. Whether that wants a
   longer per-try timeout or a fetch that tolerates one dead product is not

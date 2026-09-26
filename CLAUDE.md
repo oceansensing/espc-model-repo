@@ -139,15 +139,17 @@ fact from a guess that aged.
 
 ## The thing to understand before changing anything
 
-**A fault here is almost never fixed here.** The fetchers live in
-`oceansensing.github.io/scripts/`, the orchestrator in
-`realtime-data-repo/pipeline/`, and both are checked out at run time. What
-this repository owns is `pipeline/products.toml` (the declaration), the
-workflow, the crons, and the published tree. So:
+**A fault here is almost never fixed here.** The fetchers (`scripts/`) and
+the orchestrator (`pipeline/`, since 2026-09-26) both live in the private
+`oceansensing.github.io`, checked out at run time. What this repository owns
+is `pipeline/products.toml` (the declaration), the workflow, the crons, and
+the published tree. So:
 
 - A change to how a product is fetched, judged or assembled lands here on the
-  **next run**, from a push to the *other* repository. Nothing needs pushing
-  here for it to take effect, and pushing here will not make it happen sooner.
+  **next run**, from a push to the site — whose `main` also deploys the
+  website, so `npm run verify` there (which runs the pipeline's tests) comes
+  first. Nothing needs pushing here for it to take effect, and pushing here
+  will not make it happen sooner.
 - The corollary, and it has cost real Actions minutes: when a defect in this
   repository's output is traced to a fetcher or the orchestrator, the urgent
   push belongs to that repository — and even there it rides the next cron.
@@ -186,7 +188,7 @@ product*, so one held every twenty minutes for six hours advertises a
 which is the opposite of what is happening, and it cost twenty minutes on
 2026-08-28. `generated` at the top of the document is the run that actually
 ran; a stale `checked` beside a current `generated` is the ordinary
-signature of a hold. (`realtime-data-repo`'s `CLAUDE.md` says `checked`
+signature of a hold. (The site's `pipeline/CLAUDE.md` says `checked`
 going quiet **across products** means the pipeline is not completing — that
 is the plural case, and it is a different reading from this one.)
 

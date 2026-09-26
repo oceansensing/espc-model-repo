@@ -38,12 +38,12 @@ doctrine block at the top of `CLAUDE.md`.
 
 ## It holds no code
 
-The **fetchers** live in [`oceansensing.github.io`](https://github.com/oceansensing/oceansensing.github.io)
-under `scripts/`, and the **orchestrator** lives in
-[`realtime-data-repo`](https://github.com/oceansensing/realtime-data-repo)
-under `pipeline/`. Both are checked out at run time, and `PIPELINE_ROOT`
-points the orchestrator at this workspace so it assembles and publishes *this*
-repository's tree from *this* repository's `pipeline/products.toml`.
+The **fetchers** (`scripts/`) and, since 2026-09-26, the **orchestrator**
+(`pipeline/`) live in the private
+[`oceansensing.github.io`](https://github.com/oceansensing/oceansensing.github.io),
+checked out once at run time, and `PIPELINE_ROOT` points the orchestrator at
+this workspace so it assembles and publishes *this* repository's tree from
+*this* repository's `pipeline/products.toml`.
 
 The code lives once; the schedule, the declaration and the storage live per
 repository. Copying 988 lines of orchestrator into every new data repository
@@ -126,8 +126,8 @@ one layer's hour is what cost sixteen hours in August.
 
 Every root this repository publishes must be declared here **and** be one the
 site's `test-schema.mjs --roots` publishes, which is the one derived list of
-published files. That contract is three-sided now — this repository,
-`realtime-data-repo` and the site.
+published files. That contract spans every origin now — the six publishing
+repositories and the site.
 
 The two halves are split by what each side can answer alone. **Here**: a run
 exits 2 on a root declared in `products.toml` that the contract does not
@@ -142,3 +142,7 @@ a push rather than after one.
 `status/status.json` is the routing document consumers read: per product, the
 `roots` this origin serves, its `source`, its `hour`, the `hours` it offers
 and its `modelRun`. The map knows *origins*; origins know *products*.
+
+The same tree also goes to Cloudflare R2 (`oceannow-data/espc-model-repo/`),
+which the Ocean Now app reads; the site's `pipeline/publish_r2.py` has the
+rules.

@@ -1,36 +1,33 @@
 # ESPC's own publish, and this repository holds none of the code that does it.
 #
-# The **fetchers** live in `oceansensing.github.io` (`scripts/`) and the
-# **orchestrator** lives in `realtime-data-repo` (`pipeline/`). Both are
-# checked out here at run time, and `PIPELINE_ROOT` points the orchestrator at
-# *this* workspace so it assembles and publishes this repository's tree from
+# The **fetchers** (`scripts/`) and, since 2026-09-26, the **orchestrator**
+# (`pipeline/`) both live in the private `oceansensing.github.io`, checked out
+# once here at run time as `site/`, and `PIPELINE_ROOT` points the orchestrator
+# at *this* workspace so it assembles and publishes this repository's tree from
 # this repository's `pipeline/products.toml`.
 #
 # The alternative was copying 988 lines of orchestrator into every new data
 # repository. Three faults were found in that file in a single day, and each
 # would have had to be found twice and fixed twice.
 #
-# **Scheduled runs are deliberately not enabled yet.** This repository
-# publishes nothing until the ESPC products move into its `products.toml`, so
-# a cron would spin a runner three times an hour to assemble an empty tree.
-# The crons below are the ones `realtime-data-repo` runs, offset so the two do
-# not read HYCOM at the same minute; uncomment them when the products land.
+# **Scheduled runs are on, since 2026-08-22** — the comment above `schedule:`
+# below has when, why these minutes, and why three an hour.
 on:
   # **No `mode` input, because there is no longer a mode.** It offered
   # `full | light` and passed the choice straight to `orchestrate.py plan
   # --mode`, which has accepted only `full` since the light path was retired
   # on 2026-08-27 — so dispatching `light` failed the run outright. Found
   # 2026-08-28 by the cross-repository doc sweep: the orchestrator that
-  # dropped the mode lives in `realtime-data-repo`, and nothing pointed from
-  # that change to this dropdown.
+  # dropped the mode lived in `realtime-data-repo` then, and nothing pointed
+  # from that change to this dropdown.
   workflow_dispatch:
   # **On since 2026-08-22**, in the same change that removed the currents from
   # `realtime-data-repo` and added this origin to the site's `MAP_ORIGINS` —
   # one owner per root, never two, which `check:docs` refuses to let drift.
   #
-  # Offset from the sibling's `35 * * * *`, `15,55 * * * *` and
-  # `2 0,6,12,18 * * *` so the two repositories never read HYCOM in the same
-  # minute. **No light cron**: a light run refreshes the fast products, and
+  # Offset from `realtime-data-repo`'s `3,23,43` and `espc-model-fields-repo`'s
+  # `17,37,57` so no two of the three ever read HYCOM in the same minute.
+  # **No light cron**: a light run refreshes the fast products, and
   # this repository has none.
   #
   # **Three attempts an hour, and none at the top of it.** This is a realtime
