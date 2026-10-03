@@ -1,0 +1,16 @@
+{
+ "schema": 1,
+ "generated": "2026-10-03T17:06:37Z",
+ "mode": "full",
+ "products": {
+  "currents-surface": {
+   "tile_key": "r20261002T12-f20261003T15-f20261003T18"
+  },
+  "currents-50m": {
+   "tile_key": "r20261002T12-f20261003T15-f20261003T18"
+  },
+  "currents-caps": {
+   "tile_key": "r20261002T12-f20261003T15-f20261003T18"
+  }
+ }
+}
