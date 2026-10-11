@@ -1,0 +1,45 @@
+{
+ "schema": 1,
+ "generated": "2026-10-11T06:46:38Z",
+ "mode": "full",
+ "fates": {
+  "currents-surface": "held",
+  "currents-50m": "held",
+  "currents-caps": "held"
+ },
+ "reasons": {
+  "currents-caps": "advertises currents-avg200m-f21h.json, which is not in the stage",
+  "currents-50m": "failed the consumer contract",
+  "currents-surface": "failed the consumer contract"
+ },
+ "built": {
+  "currents-tiles-surface": false,
+  "currents-tiles-50m": false
+ },
+ "withheld": {
+  "currents-surface": {
+   "tiles-f18h": "build produced no tiles",
+   "tiles": "tiles 2026-10-11T06:00:00Z under grid 2026-10-11T03:00:00Z",
+   "tiles-f21h": "currents-f21h.json absent or unreadable"
+  },
+  "currents-50m": {
+   "tiles-50m-f18h": "build produced no tiles",
+   "tiles-50m": "tiles 2026-10-11T06:00:00Z under grid 2026-10-11T03:00:00Z",
+   "tiles-50m-f21h": "currents-50m-f21h.json absent or unreadable"
+  },
+  "currents-caps": {
+   "tiles-avg200m": "absent: the product is held, so no build ran",
+   "tiles-avg350m": "absent: the product is held, so no build ran",
+   "tiles-avg1000m": "absent: the product is held, so no build ran",
+   "tiles-avg200m-f18h": "absent: the product is held, so no build ran",
+   "tiles-avg350m-f18h": "absent: the product is held, so no build ran",
+   "tiles-avg1000m-f18h": "absent: the product is held, so no build ran"
+  }
+ },
+ "deploy": true,
+ "notes": [
+  "currents-surface: tile build failed (ok, but produced nothing for tiles-f18h)",
+  "currents-50m: tile build failed (ok, but produced nothing for tiles-50m-f18h)"
+ ],
+ "behind": []
+}

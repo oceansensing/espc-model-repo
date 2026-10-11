@@ -1,0 +1,69 @@
+{
+ "schema": 1,
+ "product": "currents-surface",
+ "title": "Currents at the surface (ESPC)",
+ "fate": "held",
+ "reason": "failed the consumer contract",
+ "checked": "2026-10-11T06:24:20Z",
+ "updated": "2026-10-11T06:24:20Z",
+ "hour": "2026-10-11T03:00:00Z",
+ "modelRun": "2026-10-10T12:00:00Z",
+ "source": "US Navy ESPC-D-V02",
+ "hours": [
+  "2026-10-11T03:00:00Z",
+  "2026-10-11T06:00:00Z"
+ ],
+ "files": {
+  "currents-antarctic-f18h.json": {
+   "bytes": 1576096
+  },
+  "currents-antarctic-vbar1d.json": {
+   "bytes": 3489329
+  },
+  "currents-antarctic.json": {
+   "bytes": 1572594
+  },
+  "currents-arctic-f18h.json": {
+   "bytes": 2187697
+  },
+  "currents-arctic-vbar1d.json": {
+   "bytes": 4425104
+  },
+  "currents-arctic.json": {
+   "bytes": 2180329
+  },
+  "currents-atlantic-f18h.json": {
+   "bytes": 691366
+  },
+  "currents-atlantic-vbar1d.json": {
+   "bytes": 1514119
+  },
+  "currents-atlantic.json": {
+   "bytes": 687891
+  },
+  "currents-f18h.json": {
+   "bytes": 582763
+  },
+  "currents-vbar1d.json": {
+   "bytes": 1242114
+  },
+  "currents.json": {
+   "bytes": 716149,
+   "sha256": "f300303295a74ef35aa4f880493cd69bfc16880cd6c58450a64ecc4f323e41d9"
+  }
+ },
+ "tiles": {
+  "tiles-f18h": {
+   "state": "absent",
+   "reason": "build produced no tiles"
+  },
+  "tiles": {
+   "state": "withheld",
+   "reason": "tiles 2026-10-11T06:00:00Z under grid 2026-10-11T03:00:00Z"
+  },
+  "tiles-f21h": {
+   "state": "withheld",
+   "reason": "currents-f21h.json absent or unreadable"
+  }
+ }
+}

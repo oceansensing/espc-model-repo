@@ -1,0 +1,69 @@
+{
+ "schema": 1,
+ "product": "currents-50m",
+ "title": "Currents at 50 m (ESPC)",
+ "fate": "held",
+ "reason": "failed the consumer contract",
+ "checked": "2026-10-11T06:24:20Z",
+ "updated": "2026-10-11T06:24:20Z",
+ "hour": "2026-10-11T03:00:00Z",
+ "modelRun": "2026-10-10T12:00:00Z",
+ "source": "US Navy ESPC-D-V02",
+ "hours": [
+  "2026-10-11T03:00:00Z",
+  "2026-10-11T06:00:00Z"
+ ],
+ "files": {
+  "currents-50m-f18h.json": {
+   "bytes": 566142
+  },
+  "currents-50m-vbar1d.json": {
+   "bytes": 1203184
+  },
+  "currents-50m.json": {
+   "bytes": 698686,
+   "sha256": "efb2d653bdf6f0775cd616eed34c5b78f08a9e7b2fc6e1b692fbf2914943e87d"
+  },
+  "currents-antarctic-50m-f18h.json": {
+   "bytes": 1506826
+  },
+  "currents-antarctic-50m-vbar1d.json": {
+   "bytes": 3363605
+  },
+  "currents-antarctic-50m.json": {
+   "bytes": 1499059
+  },
+  "currents-arctic-50m-f18h.json": {
+   "bytes": 2104535
+  },
+  "currents-arctic-50m-vbar1d.json": {
+   "bytes": 4190300
+  },
+  "currents-arctic-50m.json": {
+   "bytes": 2096610
+  },
+  "currents-atlantic-50m-f18h.json": {
+   "bytes": 682280
+  },
+  "currents-atlantic-50m-vbar1d.json": {
+   "bytes": 1483820
+  },
+  "currents-atlantic-50m.json": {
+   "bytes": 679204
+  }
+ },
+ "tiles": {
+  "tiles-50m-f18h": {
+   "state": "absent",
+   "reason": "build produced no tiles"
+  },
+  "tiles-50m": {
+   "state": "withheld",
+   "reason": "tiles 2026-10-11T06:00:00Z under grid 2026-10-11T03:00:00Z"
+  },
+  "tiles-50m-f21h": {
+   "state": "withheld",
+   "reason": "currents-50m-f21h.json absent or unreadable"
+  }
+ }
+}
