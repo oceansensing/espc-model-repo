@@ -106,7 +106,7 @@ sibling has none either.
 
 ## 2026-08-28: one poisoned time step, and it does not answer the same twice
 
-Reported by the owner at about 17:40Z as "the map is out of date", with a
+Reported at about 17:40Z as the map being out of date, with a
 share hash carrying `Currents 0-200m mean (ESPC)`. The surface was `fresh` at
 15:00Z throughout; both depth products were `held`.
 
@@ -532,8 +532,8 @@ structure, and its grid work is the largest data task yet queued.
 
 **Recorded as a genuine fork, not a settled question.** A basin-wide layer
 argues for ESPC and a new 3-D read here; a shelf-and-Gulf-Stream layer at
-3 km argues for ECCOFS. The owner's phrase was "hurricane intensity
-forecasting", which leans global.
+3 km argues for ECCOFS. The stated aim was hurricane intensity
+forecasting, which leans global.
 
 ### Open, for the owner — ANSWERED 2026-08-31, see the head of this section
 

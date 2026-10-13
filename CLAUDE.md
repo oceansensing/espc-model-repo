@@ -300,8 +300,8 @@ chose to version.**
 **An ignore rule never untracks what is already in the index**, which is why
 the fix here was `git rm --cached` and not a `.gitignore` line alone. A global
 `core.excludesFile` covering the whole Finder family was written on this
-machine at 13:13 on 2026-08-31, on the owner's instruction — *always by
-default gitignore them and never track them* — and the last of the four
+machine at 13:13 on 2026-08-31, so that such files are ignored by
+default and never tracked — and the last of the four
 additions of that day landed at 13:02: eleven minutes too late to prevent
 them, and structurally unable to reverse them.
 
@@ -316,10 +316,8 @@ file changes nothing and the test sees nothing.
 
 This workflow publishes twice from one build: to GitHub Pages, and to
 Cloudflare R2, under this repository's name, through the
-`publish-r2` job. **R2 stands on its own** — the owner,
-2026-09-24: *"When operational R2 server should be able to function on its
-own without GitHub. Cross check with GitHub is a feature but not
-requirement"* — so the job needs only `build` and its publish decision, and
+`publish-r2` job. **R2 stands on its own** (2026-09-24): it serves without GitHub, a
+cross-check against GitHub a feature and not a requirement — so the job needs only `build` and its publish decision, and
 neither side's failure stops the other. The script, its rules and its tests
 are the site's `pipeline/publish_r2.py` (private; in
 `realtime-data-repo` until 2026-09-26); the credentials are the
