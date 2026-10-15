@@ -83,6 +83,10 @@ timeout_minutes = 30
 [steps.currents]
 cmd = ["python3", "scripts/fetch-currents.py"]
 lane = "hycom"
+# 45 minutes since 2026-10-14: full fetches that day took 19, 21 and 29
+# minutes against the default 30, and three on a slow afternoon were cut off
+# at it and held. A server that does not answer still fails in seconds.
+timeout_minutes = 45
 
 # **Three products, one per upstream READ — the 2026-08-26 lesson.** This
 # was one product ("they are one fetch and one hour... they share a fate"),
