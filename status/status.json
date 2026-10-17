@@ -1,0 +1,84 @@
+{
+ "schema": 2,
+ "contract": 1,
+ "generated": "2026-10-17T20:16:03Z",
+ "mode": "full",
+ "run": {
+  "id": "39061636285",
+  "url": "https://github.com/oceansensing/espc-model-repo/actions/runs/39061636285"
+ },
+ "schedule": {
+  "crons": [
+   "7,27,47 * * * *",
+   "12 0,3,6,9,12,15,18,21 * * *"
+  ],
+  "longestGapHours": 0.33
+ },
+ "products": {
+  "currents-surface": {
+   "title": "Currents at the surface (ESPC)",
+   "roots": [
+    "currents.json"
+   ],
+   "fate": "held",
+   "reason": "step currents timed out after 45 min",
+   "checked": "2026-10-17T14:51:36Z",
+   "updated": "2026-10-17T13:15:26Z",
+   "hour": "2026-10-17T12:00:00Z",
+   "modelRun": "2026-10-16T12:00:00Z",
+   "source": "US Navy ESPC-D-V02",
+   "hours": [
+    "2026-10-17T12:00:00Z",
+    "2026-10-17T15:00:00Z"
+   ],
+   "stale": true,
+   "staleCause": "ours",
+   "ageHours": 5.27,
+   "nearestOffsetHours": 5.27
+  },
+  "currents-50m": {
+   "title": "Currents at 50 m (ESPC)",
+   "roots": [
+    "currents-50m.json"
+   ],
+   "fate": "held",
+   "reason": "step currents timed out after 45 min",
+   "checked": "2026-10-17T14:51:36Z",
+   "updated": "2026-10-17T13:15:26Z",
+   "hour": "2026-10-17T12:00:00Z",
+   "modelRun": "2026-10-16T12:00:00Z",
+   "source": "US Navy ESPC-D-V02",
+   "hours": [
+    "2026-10-17T12:00:00Z",
+    "2026-10-17T15:00:00Z"
+   ],
+   "stale": true,
+   "staleCause": "ours",
+   "ageHours": 5.27,
+   "nearestOffsetHours": 5.27
+  },
+  "currents-caps": {
+   "title": "Currents averaged to 200, 350 and 1000 m (ESPC)",
+   "roots": [
+    "currents-avg200m.json",
+    "currents-avg350m.json",
+    "currents-avg1000m.json"
+   ],
+   "fate": "held",
+   "reason": "step currents timed out after 45 min",
+   "checked": "2026-10-17T14:51:36Z",
+   "updated": "2026-10-17T13:15:26Z",
+   "hour": "2026-10-17T12:00:00Z",
+   "modelRun": "2026-10-16T12:00:00Z",
+   "source": "US Navy ESPC-D-V02",
+   "hours": [
+    "2026-10-17T12:00:00Z",
+    "2026-10-17T15:00:00Z"
+   ],
+   "stale": true,
+   "staleCause": "ours",
+   "ageHours": 5.27,
+   "nearestOffsetHours": 5.27
+  }
+ }
+}

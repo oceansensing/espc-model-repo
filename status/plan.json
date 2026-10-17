@@ -1,0 +1,19 @@
+{
+ "schema": 1,
+ "generated": "2026-10-17T19:30:25Z",
+ "mode": "full",
+ "products": {
+  "currents-surface": {
+   "tile_key": "r20261016T12-f20261017T18-f20261017T21",
+   "held_key": "r20261016T12-f20261017T12-f20261017T15"
+  },
+  "currents-50m": {
+   "tile_key": "r20261016T12-f20261017T18-f20261017T21",
+   "held_key": "r20261016T12-f20261017T12-f20261017T15"
+  },
+  "currents-caps": {
+   "tile_key": "r20261016T12-f20261017T18-f20261017T21",
+   "held_key": "r20261016T12-f20261017T12-f20261017T15"
+  }
+ }
+}
