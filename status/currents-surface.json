@@ -1,0 +1,65 @@
+{
+ "schema": 1,
+ "product": "currents-surface",
+ "title": "Currents at the surface (ESPC)",
+ "fate": "held",
+ "reason": "step currents timed out after 45 min",
+ "checked": "2026-10-24T11:21:34Z",
+ "updated": "2026-10-24T11:21:34Z",
+ "hour": "2026-10-24T09:00:00Z",
+ "modelRun": "2026-10-22T12:00:00Z",
+ "source": "US Navy ESPC-D-V02",
+ "hours": [
+  "2026-10-24T09:00:00Z",
+  "2026-10-24T12:00:00Z"
+ ],
+ "files": {
+  "currents-antarctic-f48h.json": {
+   "bytes": 1546996
+  },
+  "currents-antarctic-vbar1d.json": {
+   "bytes": 3503699
+  },
+  "currents-antarctic.json": {
+   "bytes": 1549697
+  },
+  "currents-arctic-f48h.json": {
+   "bytes": 2148425
+  },
+  "currents-arctic-vbar1d.json": {
+   "bytes": 4421954
+  },
+  "currents-arctic.json": {
+   "bytes": 2149350
+  },
+  "currents-atlantic-f48h.json": {
+   "bytes": 688900
+  },
+  "currents-atlantic-vbar1d.json": {
+   "bytes": 1514006
+  },
+  "currents-atlantic.json": {
+   "bytes": 687186
+  },
+  "currents-f48h.json": {
+   "bytes": 577718
+  },
+  "currents-vbar1d.json": {
+   "bytes": 1240291
+  },
+  "currents.json": {
+   "bytes": 578301,
+   "sha256": "9ad044c496788d80c62489ade2bb5a8536eae4d849b2c02e7c537b1524c2b5a4"
+  }
+ },
+ "tiles": {
+  "tiles": {
+   "state": "kept",
+   "reason": null
+  },
+  "tiles-f48h": {
+   "state": "kept",
+   "reason": null
+  }
+ }
+}

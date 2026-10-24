@@ -1,0 +1,38 @@
+{
+ "schema": 1,
+ "generated": "2026-10-24T13:42:39Z",
+ "mode": "full",
+ "fates": {
+  "currents-surface": "held",
+  "currents-50m": "held",
+  "currents-caps": "held"
+ },
+ "reasons": {
+  "currents-surface": "step currents timed out after 45 min",
+  "currents-50m": "step currents timed out after 45 min",
+  "currents-caps": "step currents timed out after 45 min"
+ },
+ "built": {
+  "currents-tiles-surface": false,
+  "currents-tiles-50m": false
+ },
+ "withheld": {
+  "currents-surface": {},
+  "currents-50m": {},
+  "currents-caps": {
+   "tiles-avg200m": "absent: the product is held, so no build ran",
+   "tiles-avg350m": "absent: the product is held, so no build ran",
+   "tiles-avg1000m": "absent: the product is held, so no build ran",
+   "tiles-avg200m-f48h": "absent: the product is held, so no build ran",
+   "tiles-avg350m-f48h": "absent: the product is held, so no build ran",
+   "tiles-avg1000m-f48h": "absent: the product is held, so no build ran"
+  }
+ },
+ "deploy": true,
+ "notes": [],
+ "behind": [],
+ "tile_keys": {
+  "currents-surface": "r20261022T12-f20261024T09-f20261024T12",
+  "currents-50m": "r20261022T12-f20261024T09-f20261024T12"
+ }
+}
