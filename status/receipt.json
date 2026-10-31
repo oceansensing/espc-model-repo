@@ -1,0 +1,33 @@
+{
+ "schema": 1,
+ "generated": "2026-10-31T21:36:28Z",
+ "mode": "full",
+ "fates": {
+  "currents-surface": "fresh",
+  "currents-50m": "fresh",
+  "currents-caps": "fresh"
+ },
+ "reasons": {},
+ "built": {
+  "currents-tiles-surface": true,
+  "currents-tiles-50m": true,
+  "currents-tiles-caps": false
+ },
+ "withheld": {
+  "currents-surface": {},
+  "currents-50m": {},
+  "currents-caps": {
+   "tiles-avg200m-f33h": "no readable index.json",
+   "tiles-avg350m-f33h": "no readable index.json",
+   "tiles-avg1000m-f33h": "no readable index.json"
+  }
+ },
+ "deploy": true,
+ "notes": [
+  "currents-caps: tile build failed (timed out after 60 min)"
+ ],
+ "behind": [],
+ "tile_keys": {
+  "currents-caps": "r20261030T12-f20261031T18-f20261031T21"
+ }
+}
