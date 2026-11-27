@@ -1,67 +1,15 @@
-# ESPC's own publish, and this repository holds none of the code that does it.
-#
-# The **fetchers** (`scripts/`) and, since 2026-09-26, the **orchestrator**
-# (`pipeline/`) both live in the private `oceansensing.github.io`, checked out
-# once here at run time as `site/`, and `PIPELINE_ROOT` points the orchestrator
-# at *this* workspace so it assembles and publishes this repository's tree from
-# this repository's `pipeline/products.toml`.
-#
-# The alternative was copying 988 lines of orchestrator into every new data
-# repository. Three faults were found in that file in a single day, and each
-# would have had to be found twice and fixed twice.
-#
-# **Scheduled runs are on, since 2026-08-22** — the comment above `schedule:`
-# below has when, why these minutes, and why three an hour.
+# Publish this repository's data: built by the pipeline in
+# oceansensing/oceansensing.github.io, which keeps its documentation.
+# Secrets: PIPELINES_SSH_KEY, R2_ACCESS_KEY_ID, R2_ENDPOINT, R2_SECRET_ACCESS_KEY.
+
 on:
-  # **No `mode` input, because there is no longer a mode.** It offered
-  # `full | light` and passed the choice straight to `orchestrate.py plan
-  # --mode`, which has accepted only `full` since the light path was retired
-  # on 2026-08-27 — so dispatching `light` failed the run outright. Found
-  # 2026-08-28 by the cross-repository doc sweep: the orchestrator that
-  # dropped the mode lived in `realtime-data-repo` then, and nothing pointed
-  # from that change to this dropdown.
   workflow_dispatch:
-  # **On since 2026-08-22**, in the same change that removed the currents from
-  # `realtime-data-repo` and added this origin to the site's `MAP_ORIGINS` —
-  # one owner per root, never two, which `check:docs` refuses to let drift.
-  #
-  # Offset from `realtime-data-repo`'s `3,23,43` and `espc-model-fields-repo`'s
-  # `17,37,57` so no two of the three ever read HYCOM in the same minute.
-  # **No light cron**: a light run refreshes the fast products, and
-  # this repository has none.
-  #
-  # **Three attempts an hour, and none at the top of it.** This is a realtime
-  # map and the owner's bar is data no more than 1.5 h old (2026-08-27).
-  # Hourly at `:05` did not deliver it: GitHub's scheduled events are
-  # best-effort, and measured over 2026-08-26/27 the runs landed 45 min to
-  # **4 h 19 min** apart — never at `:05`, because the top of the hour is the
-  # most congested slot on the whole platform. Nothing was failing; the events
-  # simply arrived late or not at all. More attempts at unpopular minutes is
-  # the only lever a repository has over that.
-  #
-  # **It is not a cost question** — this repository is public, so Actions
-  # minutes are free — and it is deliberately not a load question either. The
-  # probe-first exit means a run with nothing new to fetch reads a handful of
-  # OPeNDAP metadata requests and stops: measured 2026-08-27, a no-op run was
-  # 1 min 22 s end to end; re-read 2026-09-18 it is about two minutes (50
-  # no-ops that day, 96-271 s, median 122 s) -- the fetch step is 11 s of it,
-  # the rest checkouts, cache restores, the unit suite and the Pages upload.
-  # PLAN has the reading.
-  # Upstream is the thing to protect, not the runner: HYCOM is
-  # already answering some requests with timeouts, so the cadence is three an
-  # hour rather than six, and the real fetch still happens only when the
-  # anchor rolls over.
   schedule:
     - cron: '7,27,47 * * * *'
     - cron: '12 0,3,6,9,12,15,18,21 * * *'
 
-# Nothing at workflow level: each job says what it holds, and the job that
-# runs `pip install` and the fetchers holds nothing worth stealing.
 permissions: {}
 
-# One publish at a time. `cancel-in-progress: false` on purpose — a run that
-# is already fetching should finish rather than be discarded, and a newer one
-# queues behind it.
 concurrency:
   group: publish
   cancel-in-progress: false
@@ -69,9 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # 130 since 2026-10-14, with the currents step's 45 (products.toml): that
-    # step, the three tile builds after a new hour (33 to 59 minutes in all,
-    # measured that day) and about ten of setting up and handing on.
     timeout-minutes: 130
     permissions:
       contents: read
@@ -79,43 +24,9 @@ jobs:
       deploy: ${{ steps.run.outputs.deploy }}
       behind: ${{ steps.run.outputs.behind }}
     steps:
-      # This repository first: actions/checkout cleans its destination, so
-      # taking the root after the others would wipe them.
       - name: Check out this repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      # The fetchers and the published contract, one copy, in the repository
-      # the map lives in.
-      #
-      # **That repository is private, and the deploy key below is the only
-      # reason this can read it.** With no credential `actions/checkout` falls
-      # back to this workflow's own GITHUB_TOKEN, which is scoped to this
-      # repository and holds no grant on the site — a 404 that would take down
-      # every product at once rather than one.
-      #
-      # A deploy key over a PAT or an App, on what this step actually needs:
-      # it reads exactly one repository and writes nothing. The *scope* is by
-      # construction — a deploy key reaches one repository and no other — and
-      # the **read-only part is a checkbox**, "Allow write access", which must
-      # be left unchecked. Nothing here pushes to the site repository, and
-      # this job runs `pip install`, `npm ci` and four fetch scripts against
-      # public servers, so write access here would put the repository that
-      # deploys the public site inside that blast radius.
-      #
-      # It also does not expire, where a fine-grained PAT stops the whole
-      # pipeline dead on its expiry date, and it belongs to no person, so it
-      # survives somebody leaving the org.
-      #
-      # **Its own key, not the one `realtime-data-repo` uses.** A repository
-      # may hold many deploy keys, and one per consumer means revoking or
-      # rotating one does not take the other down. The public half goes on the
-      # site repository's Deploy keys page with write access unchecked; the
-      # private half is the secret named here.
-      #
-      # The hazard in the ordering, measured once already: the secret **arms**
-      # this path the moment it exists, because a non-empty `ssh-key` sends
-      # `actions/checkout` down SSH and the HTTPS fallback is not consulted.
-      # Put the key on the site repository first, then set the secret here.
       - name: Check out the pipelines
         id: pipelines
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -125,12 +36,6 @@ jobs:
           path: site
           ssh-key: ${{ secrets.PIPELINES_SSH_KEY }}
 
-      # **The message a failure gives is not the message anybody needs.** Over
-      # HTTPS `actions/checkout` says "Repository not found", which is true and
-      # points at the wrong thing; over SSH it says "Permission denied
-      # (publickey)", which names the mechanism and not the fix. Scoped to this
-      # step's own outcome rather than a bare `if: failure()`, which would
-      # attach this explanation to any earlier failure in the job.
       - name: Say why the pipelines could not be checked out
         if: failure() && steps.pipelines.outcome == 'failure'
         run: |
@@ -139,16 +44,6 @@ jobs:
           echo "::error title=If the log says only 'Permission denied (publickey)'::The key parsed but the server would not take it. The public half is missing from the site repository's Deploy keys page, or was revoked, or does not match this private half."
           echo "::error title=If the log says 'Repository not found'::No credential was used at all - the secret is unset or empty, so actions/checkout fell back to this workflow's GITHUB_TOKEN, which holds no grant on the site repository."
 
-      # **The orchestrator is in the site checkout above** (`site/pipeline/`),
-      # since 2026-09-26: the pipeline's code moved from the public
-      # realtime-data-repo to the private site repository, which this run
-      # already reads with its deploy key. `PIPELINE_ROOT` below is what lets
-      # it operate on this tree while living in that one.
-
-      # The last publish — the seed, the previous manifests, and the whole of
-      # what a held product falls back to. Tolerated missing exactly once:
-      # before the branch has ever been pushed, the orchestrator starts cold
-      # and says so.
       - name: Check out the last publish
         continue-on-error: true
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -164,9 +59,6 @@ jobs:
         with:
           node-version: '22'
 
-      # A broken orchestrator refuses to run rather than publishing something
-      # strange with green ticks. Run from the site's checkout, where the
-      # pipeline's code and its tests live.
       - name: Unit-test the orchestrator
         working-directory: site
         run: python3 pipeline/test_orchestrate.py
@@ -182,26 +74,6 @@ jobs:
           PIPELINE_ROOT: ${{ github.workspace }}
         run: python3 site/pipeline/orchestrate.py plan --mode full
 
-      # **One Restore and one Save per `cache` name in products.toml.** Nothing
-      # loops here, because a matrix would need separate jobs — so this pair
-      # is the list a new product silently escapes, and the orchestrator's
-      # `plan` names any declared cache with neither step. That failure is
-      # invisible otherwise: a cache nothing restores is not an error, it is
-      # tiles rebuilt from scratch every run, with correct output.
-      #
-      # **`restore-keys` is the published hour's key, and nothing wider**
-      # (2026-10-14). The prefix restores of the light runs went with them on
-      # 2026-08-28; this is one complete key, the one the last publish's tiles
-      # are under, which `plan` names as `cache-held-<name>` whenever the
-      # probe names another hour, and leaves empty, and inert, when it does
-      # not. A miss on the probe's key restores what is published; the
-      # orchestrator keeps it aside while the steps run and puts it back if
-      # the product is held, so a hold after a probe that answered keeps its
-      # tiles.
-      # Three pairs now, one per fault-domain product — the split that lets a
-      # clean surface publish while a corrupt depth holds. `plan` names any
-      # declared cache with neither step, so a fourth product cannot silently
-      # escape this list.
       - name: Restore surface tiles
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
@@ -256,10 +128,7 @@ jobs:
         with:
           path: out
 
-      # What this origin publishes to R2 alone (the site pipeline's D13, its
-      # note of 2026-10-09), and R2's whole status: the R2 job lays it beside
-      # the site. Public for the day it is kept, so open data only.
-      - name: Hand on what R2 alone carries
+      - name: Upload the second tree
         if: steps.run.outputs.deploy == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -278,8 +147,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Only this job publishes, so only this job holds the write scopes. The
-    # build job runs `pip install` and the fetchers and holds neither.
     permissions:
       contents: write
       pages: write
@@ -293,9 +160,6 @@ jobs:
           name: branch-out
           path: branch-out
 
-      # `published` is an orphan branch, force-pushed each run: it is a
-      # snapshot of the last publish rather than a history, and banking every
-      # version of every grid forever is what filled the predecessor.
       - name: Publish the branch
         run: |
           cd branch-out
@@ -314,16 +178,6 @@ jobs:
         if: needs.build.outputs.deploy == 'true'
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
 
-
-  # **The R2 publish** (since 2026-09-24; the site pipeline's D12: R2
-  # stands on its own, and a comparison with Pages is a feature, never
-  # a requirement).
-  # The tree this run built, published to Cloudflare R2 under this
-  # repository's name — beside the Pages deploy, not after it: it needs only
-  # the build and its publish decision, so a Pages outage never stops it and
-  # a failure here never touches Pages. Only what changed is uploaded, and
-  # the bucket is then compared file by file with what the run built.
-  # `pipeline/publish_r2.py` in oceansensing.github.io has the rules.
   publish-r2:
     needs: build
     if: needs.build.outputs.deploy == 'true'
@@ -332,8 +186,6 @@ jobs:
     permissions:
       contents: read
     steps:
-      # The publish, and beside it the writer it packs a tile set into one
-      # archive with (scripts/tile_archive.py).
       - name: Check out the publish script
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -350,7 +202,7 @@ jobs:
           name: github-pages
           path: pages
 
-      - name: Download what R2 alone carries
+      - name: Download the second tree
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: r2-only
@@ -359,13 +211,11 @@ jobs:
       - name: Test the publish script
         run: python3 code/pipeline/test_publish_r2.py
 
-      - name: Publish to R2
+      - name: Publish to storage
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
-          # The CLI's newer default checksums are not every S3-compatible
-          # store's; ask for them only where an operation requires them.
           AWS_REQUEST_CHECKSUM_CALCULATION: when_required
           AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
         run: |
