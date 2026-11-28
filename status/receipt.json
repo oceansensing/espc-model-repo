@@ -1,0 +1,25 @@
+{
+ "schema": 1,
+ "generated": "2026-11-28T17:51:07Z",
+ "mode": "full",
+ "fates": {
+  "currents-surface": "fresh",
+  "currents-50m": "fresh",
+  "currents-caps": "fresh"
+ },
+ "reasons": {},
+ "built": {},
+ "withheld": {
+  "currents-surface": {},
+  "currents-50m": {},
+  "currents-caps": {}
+ },
+ "deploy": true,
+ "notes": [],
+ "behind": [],
+ "tile_keys": {
+  "currents-surface": "r20261127T12-f20261128T15-f20261128T18",
+  "currents-50m": "r20261127T12-f20261128T15-f20261128T18",
+  "currents-caps": "r20261127T12-f20261128T15-f20261128T18"
+ }
+}
